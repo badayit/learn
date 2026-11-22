@@ -34,9 +34,6 @@ header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; b
 .top-in { max-width: 560px; margin: 0 auto; display: flex; align-items: center; gap: 12px }
 .brand { font-family: var(--f-display); font-weight: 700; font-size: 24px; letter-spacing: .02em; text-transform: uppercase; line-height: 1 }
 .brand small { display: block; font-family: var(--f-ar); font-weight: 400; font-size: 13px; text-transform: none; letter-spacing: 0; opacity: .85; margin-top: 3px }
-.plate { margin-left: auto; display: flex; align-items: stretch; border: 2px solid #fff; border-radius: 6px; overflow: hidden; font-family: var(--f-display); font-weight: 700; font-size: 15px }
-.plate span:first-child { background: #fff; color: var(--blue); padding: 2px 6px }
-.plate span:last-child { padding: 2px 8px; font-variant-numeric: tabular-nums }
 
 main { max-width: 560px; margin: 0 auto; padding-block: 16px 110px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: flex; flex-direction: column; gap: 16px }
@@ -109,7 +106,8 @@ h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0
 .feedback.ok { background: var(--ok-soft) } .feedback.bad { background: var(--bad-soft) }
 .feedback .verdict { font-family: var(--f-display); font-weight: 700; font-size: 20px; text-transform: uppercase }
 .feedback.ok .verdict { color: var(--ok) } .feedback.bad .verdict { color: var(--red) }
-.nav2 { display: flex; gap: 10px } .nav2 .btn { flex: 1 }
+.nav2 { display: flex; gap: 10px; flex-wrap: wrap } .nav2 .btn { flex: 1 1 140px; min-width: 0 }
+.stat { min-width: 0 }
 
 /* Result */
 .result { border-radius: 14px; padding: 22px 18px; text-align: center; display: grid; gap: 6px; color: #fff }
@@ -129,6 +127,37 @@ h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0
 .sg .ar { font-size: 13px; color: var(--muted) }
 .cat { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
 
+.av { margin-left: auto; width: 40px; height: 40px; border-radius: 99px; border: 2px solid #fff; display: grid; place-items: center; overflow: hidden;
+  background: rgba(255,255,255,.15); color: #fff; font-family: var(--f-display); font-weight: 700; font-size: 17px; text-decoration: none; flex: none }
+.av img { width: 100%; height: 100%; object-fit: cover }
+.av svg { width: 22px; height: 22px }
+.form { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px }
+.field { display: grid; gap: 5px }
+.field label { font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.field label .ar { font-weight: 400; color: var(--muted); font-size: 13px }
+.field input[type=text], .field input[type=password], .field input[type=date], .field input[type=email], .field input[type=tel] {
+  width: 100%; min-height: 46px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); padding: 10px 12px; font: inherit; font-size: 16px }
+.field input:focus { outline: none; border-color: var(--blue) }
+.field .hint { font-size: 12px; color: var(--muted) }
+.err { color: var(--red); font-size: 14px; font-weight: 600; margin: 0 }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px }
+.photo-pick { display: flex; align-items: center; gap: 12px }
+.photo-pick .av { margin: 0; width: 64px; height: 64px; border-color: var(--line); background: var(--chip); color: var(--blue); font-size: 26px }
+.pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px }
+.pcard .who { display: flex; align-items: center; gap: 14px }
+.pcard .who .av { margin: 0; width: 72px; height: 72px; border-color: var(--line); background: var(--blue); font-size: 30px }
+.pcard .who .av svg { width: 34px; height: 34px }
+.pcard .who > div { min-width: 0 }
+.pcard .who b { display: block; font-family: var(--f-display); font-size: 26px; line-height: 1.1; text-transform: uppercase; overflow-wrap: anywhere }
+.pcard .who > div span { color: var(--muted); font-size: 14px; overflow-wrap: anywhere }
+.count-down { background: var(--chip); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap }
+.count-down b { font-family: var(--f-display); font-size: 24px; font-variant-numeric: tabular-nums }
+.banner { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit }
+.banner > div { flex: 1; min-width: 0 }
+.banner b { display: block }
+.hello { display: flex; align-items: center; gap: 12px }
+.hello .av { margin: 0; width: 48px; height: 48px; border-color: var(--line); background: var(--blue) }
+.confirm { background: var(--bad-soft); border-radius: 12px; padding: 14px; display: grid; gap: 10px }
 .empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 24px 18px; text-align: center; display: grid; gap: 8px }
 
 /* Tab bar */
@@ -164,7 +193,7 @@ body.in-quiz main { padding-bottom: 32px }
 
 <header class="top"><div class="top-in">
   <div class="brand">Patente Facile<small class="ar">تعلم البيرمي ديال إيطاليا</small></div>
-  <div class="plate" aria-label="Patente B"><span>I</span><span>B</span></div>
+  <a class="av" id="avatar" href="#profilo" aria-label="Profilo"></a>
 </div></header>
 
 <main id="app" aria-live="polite"></main>
@@ -484,9 +513,31 @@ const SPK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 
 /* ---------- Storage (per-device progress) ---------- */
 const KEY = "patente-facile-v1";
-let store = { exams: [], wrong: [], right: {} };
-try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) store = Object.assign(store, s); } catch (e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+/* Profiles live only on this device. Guest progress uses KEY; each profile uses KEY-p-<id>. */
+let acct = { profiles: [], current: null };
+try { const a = JSON.parse(ls.get(KEY + "-profiles") || "null"); if (a) acct = Object.assign(acct, a); } catch (e) {}
+const saveAcct = () => ls.set(KEY + "-profiles", JSON.stringify(acct));
+let me = null, locked = null, store;
+const storeKey = () => me ? KEY + "-p-" + me.id : KEY;
+function loadStore() { store = { exams: [], wrong: [], right: {} }; try { const s = JSON.parse(ls.get(storeKey()) || "null"); if (s) store = Object.assign(store, s); } catch (e) {} }
+const save = () => ls.set(storeKey(), JSON.stringify(store));
+{ const last = acct.profiles.find(p => p.id === acct.current); if (last) { if (last.hash) locked = last; else me = last; } }
+loadStore();
+async function hashPw(pw, salt) {
+  try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + ":" + pw)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
+  catch (e) { let h = 2166136261; for (const c of salt + ":" + pw) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return "f" + (h >>> 0).toString(16); }
+}
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const initials = n => (n || "?").trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+const PERSON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`;
+const avInner = p => p ? (p.photo ? `<img src="${p.photo}" alt="">` : esc(initials(p.name))) : PERSON;
+function daysTo(d) { if (!d) return null; const t = new Date(d + "T00:00:00"), n = new Date(); n.setHours(0, 0, 0, 0); return Math.round((t - n) / 86400000); }
+function renderAvatar() { const a = document.getElementById("avatar"); if (a) a.innerHTML = avInner(me); }
 let showAr = true; try { showAr = localStorage.getItem(KEY + "-ar") !== "0"; } catch (e) {}
 function record(q, ok) {
   const w = new Set(store.wrong);
@@ -511,8 +562,10 @@ function updateBadge() {
 function viewHome() {
   const ex = store.exams, passed = ex.filter(x => x.passed).length;
   const seen = Object.keys(store.right).length;
-  const last = ex.slice(-8);
-  app.innerHTML = `
+  const last = ex.slice(-8), dd = me ? daysTo(me.exam) : null;
+  app.innerHTML = (me ? `<div class="hello"><span class="av">${avInner(me)}</span><div><h2>Ciao, ${esc(me.name.split(" ")[0])}</h2>
+      ${dd !== null && dd >= 0 ? `<p class="sub">${dd === 0 ? "L'esame è oggi. In bocca al lupo!" : `Mancano <b>${dd}</b> giorni all'esame`} <span class="ar">${dd === 0 ? "الامتحان اليوم، بالتوفيق!" : `باقي ${dd} يوم للامتحان`}</span></p>` : ""}</div></div>`
+    : `<a class="banner" href="#profilo"><span class="av" style="margin:0;background:var(--blue);border-color:var(--line)">${PERSON}</span><div><b>Crea il tuo profilo</b><span class="ar sub" style="display:block;text-align:left">سجّل باش تحفظ التقدم ديالك</span></div><span class="sub">›</span></a>`) + `
     <section class="hero-card">
       <div><div class="eyebrow">Esame di teoria · Patente B</div>
       <h2>Simulazione d'esame</h2>
@@ -537,6 +590,114 @@ function viewHome() {
     </div>
     <p class="sub" style="font-size:13px">I tuoi progressi restano salvati su questo telefono. <span class="ar" style="display:block;text-align:left">تقدّمك محفوظ في هذا الهاتف.</span></p>`;
   $("#goExam").onclick = startExam;
+}
+
+function profileForm(p) {
+  const edit = !!p, hasGuest = !edit && !acct.profiles.length && (() => { try { const g = JSON.parse(ls.get(KEY) || "null"); return g && (g.exams.length || g.wrong.length || Object.keys(g.right).length); } catch (e) { return false; } })();
+  return `<form class="form" id="pform" novalidate>
+    <h3>${edit ? "Modifica profilo" : "Registrati"} <span class="ar" style="font-size:15px;font-weight:400;text-transform:none">${edit ? "تعديل الملف" : "تسجيل حساب جديد"}</span></h3>
+    <div class="photo-pick"><span class="av" id="pfPrev">${p && p.photo ? `<img src="${p.photo}" alt="">` : PERSON}</span>
+      <label class="btn btn-ghost" style="font-size:16px;min-height:44px" for="pfPhoto">Foto <span class="ar">صورة</span></label>
+      <input type="file" id="pfPhoto" accept="image/*" hidden></div>
+    <div class="field"><label for="pfName">Nome e cognome <span class="ar">الاسم الكامل</span></label><input type="text" id="pfName" autocomplete="name" value="${esc(p ? p.name : "")}" required></div>
+    <div class="field"><label for="pfContact">Gmail o numero di telefono <span class="ar">الجيميل أو رقم الهاتف</span></label>
+      <input type="text" id="pfContact" inputmode="email" autocomplete="email" placeholder="nome@gmail.com · +39 333 123 4567" value="${esc(p ? p.contact || "" : "")}"></div>
+    <div class="field"><label for="pfExam">Data dell'esame <span class="ar">تاريخ الامتحان</span></label><input type="date" id="pfExam" value="${p && p.exam ? p.exam : ""}"><span class="hint">Facoltativa. Ti mostriamo i giorni che mancano.</span></div>
+    <div class="field"><label for="pfPw">${edit ? "Nuova password" : "Password"} <span class="ar">${edit ? "كلمة سر جديدة" : "كلمة السر"}</span></label><input type="password" id="pfPw" autocomplete="new-password" minlength="4">
+      <span class="hint">${edit ? "Lascia vuoto per non cambiarla." : "Almeno 4 caratteri."}</span></div>
+    <div class="field"><label for="pfPw2">Ripeti la password <span class="ar">عاود كلمة السر</span></label><input type="password" id="pfPw2" autocomplete="new-password"></div>
+    ${edit && p.hash ? `<label class="check"><input type="checkbox" id="pfNoPw"> Rimuovi la password <span class="ar">حيد كلمة السر</span></label>` : ""}
+    ${hasGuest ? `<label class="check"><input type="checkbox" id="pfMove" checked> Porta nel profilo i progressi già fatti <span class="ar">نقل التقدم ديالي</span></label>` : ""}
+    <p class="err" id="pfErr" hidden></p>
+    <button class="btn btn-primary" type="submit">${edit ? "Salva" : "Crea profilo"} <span class="ar">${edit ? "حفظ" : "سجّل"}</span></button>
+    ${edit ? `<button class="btn btn-ghost" type="button" id="pfCancel">Annulla</button>` : ""}
+  </form>`;
+}
+function bindProfileForm(p) {
+  let photo = p ? p.photo || "" : "";
+  $("#pfPhoto").onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const img = new Image(), url = URL.createObjectURL(f);
+    img.onload = () => { const c = document.createElement("canvas"), S = 160, k = Math.max(S / img.width, S / img.height);
+      c.width = c.height = S; c.getContext("2d").drawImage(img, (S - img.width * k) / 2, (S - img.height * k) / 2, img.width * k, img.height * k);
+      photo = c.toDataURL("image/jpeg", 0.82); $("#pfPrev").innerHTML = `<img src="${photo}" alt="">`; URL.revokeObjectURL(url); };
+    img.src = url;
+  };
+  const c = $("#pfCancel"); if (c) c.onclick = () => viewProfile();
+  $("#pform").onsubmit = async e => {
+    e.preventDefault();
+    const err = m => { const el = $("#pfErr"); el.textContent = m; el.hidden = false; };
+    const name = $("#pfName").value.trim(), contact = $("#pfContact").value.trim(), exam = $("#pfExam").value;
+    const pw = $("#pfPw").value, pw2 = $("#pfPw2").value, noPw = $("#pfNoPw") && $("#pfNoPw").checked;
+    if (!name) return err("Scrivi il tuo nome. · اكتب سميتك");
+    if (contact && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) && !/^\+?[\d\s\-]{8,18}$/.test(contact)) return err("Scrivi una Gmail o un numero di telefono valido. · الجيميل أو الرقم ماشي صحيح");
+    if (pw && pw.length < 4) return err("La password deve avere almeno 4 caratteri. · كلمة السر خاصها 4 حروف على الأقل");
+    if (pw !== pw2) return err("Le due password non sono uguali. · كلمتي السر ماشي بحال بحال");
+    const prof = p || { id: newId(), created: Date.now() };
+    Object.assign(prof, { name, contact, exam, photo });
+    if (noPw) { delete prof.hash; delete prof.salt; }
+    if (pw) { prof.salt = newId(); prof.hash = await hashPw(pw, prof.salt); }
+    if (!p) {
+      if ($("#pfMove") && $("#pfMove").checked) { const g = ls.get(KEY); if (g) { ls.set(KEY + "-p-" + prof.id, g); ls.del(KEY); } }
+      acct.profiles.push(prof);
+    }
+    me = prof; locked = null; acct.current = prof.id; saveAcct(); loadStore(); renderAvatar();
+    toast(p ? "Profilo salvato · تم الحفظ" : `Benvenuto, ${name.split(" ")[0]}! · مرحبا`);
+    p ? viewProfile() : (location.hash = "#home", route());
+  };
+}
+function loginCard(p) {
+  return `<form class="form" id="lform" novalidate>
+    <div class="pcard" style="padding:0;border:0"><div class="who"><span class="av">${avInner(p)}</span><div><b>${esc(p.name)}</b><span>${esc(p.contact || "")}</span></div></div></div>
+    <div class="field"><label for="lPw">Password <span class="ar">كلمة السر</span></label><input type="password" id="lPw" autocomplete="current-password"></div>
+    <p class="err" id="lErr" hidden></p>
+    <button class="btn btn-primary" type="submit">Entra <span class="ar">دخول</span></button>
+    <button class="btn btn-ghost" type="button" id="lBack">Altro profilo o ospite</button>
+  </form>`;
+}
+function showLogin(p) {
+  app.innerHTML = `<div><h2>Accedi</h2><p class="sub ar">دخل كلمة السر ديالك</p></div>` + loginCard(p);
+  setTimeout(() => { const i = $("#lPw"); i && i.focus(); }, 50);
+  $("#lBack").onclick = () => { locked = null; me = null; acct.current = null; saveAcct(); loadStore(); renderAvatar(); viewProfile(); };
+  $("#lform").onsubmit = async e => {
+    e.preventDefault();
+    if (await hashPw($("#lPw").value, p.salt) !== p.hash) { const el = $("#lErr"); el.textContent = "Password sbagliata. · كلمة السر غالطة"; el.hidden = false; return; }
+    me = p; locked = null; acct.current = p.id; saveAcct(); loadStore(); renderAvatar(); updateBadge();
+    location.hash = "#home"; route();
+  };
+}
+function enter(p) { if (p.hash) { locked = p; showLogin(p); } else { me = p; acct.current = p.id; saveAcct(); loadStore(); renderAvatar(); location.hash = "#home"; route(); } }
+function viewProfile() {
+  if (locked) return showLogin(locked);
+  if (me) {
+    const ex = store.exams, dd = daysTo(me.exam), best = ex.length ? Math.min(...ex.map(x => x.errors)) : null;
+    app.innerHTML = `<div><h2>Profilo</h2></div>
+      <div class="pcard">
+        <div class="who"><span class="av">${avInner(me)}</span><div><b>${esc(me.name)}</b><span>${esc(me.contact || "Nessuna Gmail o telefono")}</span></div></div>
+        ${me.exam ? `<div class="count-down"><span>Esame: ${new Date(me.exam + "T00:00:00").toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" })}</span><b>${dd > 0 ? dd + " giorni" : dd === 0 ? "Oggi" : "Fatto"}</b></div>` : ""}
+        <div class="stats"><div class="stat"><b>${ex.length}</b><span>esami</span></div><div class="stat"><b>${ex.filter(x => x.passed).length}</b><span>promossi</span></div><div class="stat"><b>${best === null ? "–" : best}</b><span>meno errori</span></div></div>
+        <div class="nav2"><button class="btn btn-blue" id="pEdit">Modifica <span class="ar">تعديل</span></button><button class="btn btn-ghost" id="pOut">Esci <span class="ar">خروج</span></button></div>
+      </div>
+      <div id="delZone"><button class="btn btn-ghost" id="pDel" style="width:100%;color:var(--red)">Elimina profilo <span class="ar">حذف الحساب</span></button></div>
+      <p class="note">${me.hash ? "Profilo protetto da password." : "Profilo senza password: chiunque usi questo telefono può aprirlo."} Il profilo e i progressi sono salvati solo su questo telefono. <span class="ar" style="display:block;text-align:left">الحساب والتقدم محفوظين غير ف هاد التيليفون.</span></p>`;
+    $("#pEdit").onclick = () => { app.innerHTML = profileForm(me); bindProfileForm(me); };
+    $("#pOut").onclick = () => { me = null; acct.current = null; saveAcct(); loadStore(); renderAvatar(); viewProfile(); };
+    $("#pDel").onclick = () => {
+      $("#delZone").innerHTML = `<div class="confirm"><b>Eliminare il profilo e tutti i progressi?</b><span class="ar">واش متأكد؟ غادي يتمسح الحساب والتقدم ديالو</span>
+        <div class="nav2"><button class="btn btn-primary" id="dYes">Elimina</button><button class="btn btn-ghost" id="dNo">Annulla</button></div></div>`;
+      $("#dNo").onclick = viewProfile;
+      $("#dYes").onclick = () => { ls.del(KEY + "-p-" + me.id); acct.profiles = acct.profiles.filter(x => x.id !== me.id); acct.current = null; me = null; saveAcct(); loadStore(); renderAvatar(); updateBadge(); toast("Profilo eliminato · تم الحذف"); viewProfile(); };
+    };
+    return;
+  }
+  const list = acct.profiles.map(p => `<button class="row" data-id="${p.id}"><span class="av" style="margin:0;width:40px;height:40px;background:var(--blue);border-color:var(--line);font-size:16px">${avInner(p)}</span>
+    <span class="txt"><b>${esc(p.name)}</b><span class="sub" style="font-size:13px">${esc(p.contact || "")}${p.hash ? " · 🔒" : ""}</span></span><span class="sub">Entra ›</span></button>`).join("");
+  app.innerHTML = `<div><h2>Profilo</h2><p class="sub ar">سجّل باش يتحفظ التقدم ديالك. كل واحد ف العائلة يقدر يدير الحساب ديالو ف نفس التيليفون.</p></div>
+    ${list ? `<div style="display:grid;gap:8px"><div class="eyebrow">Profili su questo telefono</div><div class="list">${list}</div></div>` : ""}
+    ${profileForm(null)}
+    <p class="note">Ora stai usando l'app come ospite. Il profilo resta solo su questo telefono: la Gmail o il numero servono come informazione, non per ricevere messaggi. <span class="ar" style="display:block;text-align:left">الحساب كيبقى غير ف هاد التيليفون. الجيميل ولا الرقم غير معلومة، ما كيوصلك حتى ميساج.</span></p>`;
+  app.querySelectorAll(".row[data-id]").forEach(b => b.onclick = () => enter(acct.profiles.find(p => p.id === b.dataset.id)));
+  bindProfileForm(null);
 }
 
 function viewCourses() {
@@ -686,7 +847,7 @@ function finishPractice() {
 }
 
 /* ---------- Routing ---------- */
-const VIEWS = { home: viewHome, corsi: viewCourses, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
+const VIEWS = { home: viewHome, profilo: viewProfile, corsi: viewCourses, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
 function route() {
   if (session) return;
   document.body.classList.remove("in-quiz");
@@ -694,7 +855,8 @@ function route() {
   const h = location.hash.slice(1), lk = h.startsWith("corso-") && TOPICS[h.slice(6)] ? h.slice(6) : null;
   const v = lk ? "corsi" : VIEWS[h] ? h : "home";
   document.querySelectorAll(".tabs a").forEach(a => a.dataset.v === v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
-  lk ? viewLesson(lk) : VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
+  renderAvatar();
+  locked ? showLogin(locked) : lk ? viewLesson(lk) : VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", () => { if (session && session.mode === "exam") return; session = null; clearInterval(timerId); route(); });
 route();
