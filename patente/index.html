@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B4EA2">
+<link rel="manifest" href="manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Patente Facile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;600&display=swap">
+<style>
+/* Layout: one phone-width column, sticky road-sign blue header, fixed bottom tab bar. */
+:root {
+  --bg: #EDF1F7; --surface: #FFFFFF; --ink: #0F1B2D; --muted: #56647C;
+  --line: #D3DBE7; --blue: #0B4EA2; --blue-ink: #FFFFFF; --red: #C8102E;
+  --ok: #1E7A4C; --ok-soft: #E2F3EA; --bad-soft: #FBE5E8; --chip: #E3EAF4;
+  --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-ar: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0A111D; --surface: #131C2C; --ink: #E5EBF4; --muted: #8E9BB2;
+  --line: #243149; --blue: #2F6FD0; --blue-ink: #FFFFFF; --red: #F05A6E;
+  --ok: #3DBE7E; --ok-soft: #123224; --bad-soft: #3A1820; --chip: #1C2840; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0A111D; --surface: #131C2C; --ink: #E5EBF4; --muted: #8E9BB2;
+  --line: #243149; --blue: #2F6FD0; --blue-ink: #FFFFFF; --red: #F05A6E;
+  --ok: #3DBE7E; --ok-soft: #123224; --bad-soft: #3A1820; --chip: #1C2840; color-scheme: dark }
+
+* { box-sizing: border-box }
+html, body { height: 100% }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.45; -webkit-tap-highlight-color: transparent }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--blue) }
+.ar { font-family: var(--f-ar); direction: rtl; text-align: right; unicode-bidi: isolate }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--blue); color: var(--blue-ink);
+  padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.top-in { max-width: 560px; margin: 0 auto; display: flex; align-items: center; gap: 12px }
+.brand { font-family: var(--f-display); font-weight: 700; font-size: 24px; letter-spacing: .02em; text-transform: uppercase; line-height: 1 }
+.brand small { display: block; font-family: var(--f-ar); font-weight: 400; font-size: 13px; text-transform: none; letter-spacing: 0; opacity: .85; margin-top: 3px }
+.plate { margin-left: auto; display: flex; align-items: stretch; border: 2px solid #fff; border-radius: 6px; overflow: hidden; font-family: var(--f-display); font-weight: 700; font-size: 15px }
+.plate span:first-child { background: #fff; color: var(--blue); padding: 2px 6px }
+.plate span:last-child { padding: 2px 8px; font-variant-numeric: tabular-nums }
+
+main { max-width: 560px; margin: 0 auto; padding-block: 16px 110px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 16px }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: 26px; line-height: 1.1; margin: 0; text-wrap: balance; text-transform: uppercase; letter-spacing: .01em }
+h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0; letter-spacing: .02em; text-transform: uppercase }
+.sub { color: var(--muted); margin: 0 }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted) }
+
+/* Home */
+.hero-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px }
+.rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+.rule { background: var(--chip); border-radius: 10px; padding: 10px 8px; text-align: center }
+.rule b { display: block; font-family: var(--f-display); font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums }
+.rule span { font-size: 12px; color: var(--muted) }
+.btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; border-radius: 12px; padding: 12px 18px;
+  font-family: var(--f-display); font-weight: 700; font-size: 20px; letter-spacing: .03em; text-transform: uppercase }
+.btn-primary { background: var(--red); color: #fff }
+.btn-blue { background: var(--blue); color: var(--blue-ink) }
+.btn-ghost { background: var(--chip); color: var(--ink) }
+.btn .ar { font-weight: 400; font-size: 14px; text-transform: none; letter-spacing: 0; opacity: .9 }
+.btn:disabled { opacity: .45; cursor: default }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px }
+.stat b { display: block; font-family: var(--f-display); font-size: 28px; line-height: 1.05; font-variant-numeric: tabular-nums }
+.stat span { font-size: 12px; color: var(--muted) }
+.history { display: flex; gap: 6px; flex-wrap: wrap }
+.pill { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 99px; font-variant-numeric: tabular-nums }
+.pill.ok { background: var(--ok-soft); color: var(--ok) } .pill.bad { background: var(--bad-soft); color: var(--red) }
+
+/* Topic list */
+.list { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden }
+.row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-align: left; border-top: 1px solid var(--line); width: 100% }
+.row:first-child { border-top: 0 }
+.row:hover { background: var(--chip) }
+.row .ic { width: 40px; height: 40px; flex: none }
+.row .txt { flex: 1; min-width: 0; display: grid; gap: 1px }
+.row .txt b { font-weight: 600 }
+.row .txt .ar { font-size: 13px; color: var(--muted); text-align: left; direction: rtl }
+.meter { width: 64px; flex: none; display: grid; gap: 4px; justify-items: end }
+.meter i { display: block; width: 100%; height: 5px; border-radius: 3px; background: var(--chip); overflow: hidden }
+.meter i::after { content: ""; display: block; height: 100%; width: var(--p, 0%); background: var(--ok) }
+.meter small { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums }
+
+/* Quiz */
+.qbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.qbar .count { font-family: var(--f-display); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums }
+.timer { margin-left: auto; font-family: var(--f-display); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; padding: 2px 10px; border-radius: 8px; background: var(--chip) }
+.timer.low { background: var(--red); color: #fff }
+.grid30 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px }
+.grid30 button { aspect-ratio: 1; max-width: 100%; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums }
+.grid30 button.done { background: var(--chip); border-color: var(--chip) }
+.grid30 button.cur { border: 2px solid var(--blue); color: var(--blue) }
+.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px }
+.qtopic { display: flex; align-items: center; gap: 8px; justify-content: space-between }
+.sign-wrap { display: flex; justify-content: center; padding: 6px 0 }
+.sign-wrap svg { width: 132px; height: 132px; max-width: 100% }
+.qtext { font-size: 21px; font-weight: 500; line-height: 1.35; margin: 0 }
+.qar { font-size: 16px; color: var(--muted); margin: 0; padding-top: 10px; border-top: 1px dashed var(--line) }
+.toggle { font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--chip) }
+.toggle[aria-pressed="true"] { background: var(--blue); color: var(--blue-ink) }
+.vf { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.vf button { min-height: 64px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; gap: 0; padding: 6px }
+.vf button b { font-family: var(--f-display); font-size: 26px; letter-spacing: .04em; line-height: 1 }
+.vf button span { font-family: var(--f-ar); font-size: 13px; color: var(--muted) }
+.vf button.sel { border-color: var(--blue); background: var(--chip) }
+.vf button.right { border-color: var(--ok); background: var(--ok-soft) }
+.vf button.wrong { border-color: var(--red); background: var(--bad-soft) }
+.vf button:disabled { cursor: default }
+.feedback { border-radius: 12px; padding: 14px; display: grid; gap: 6px }
+.feedback.ok { background: var(--ok-soft) } .feedback.bad { background: var(--bad-soft) }
+.feedback .verdict { font-family: var(--f-display); font-weight: 700; font-size: 20px; text-transform: uppercase }
+.feedback.ok .verdict { color: var(--ok) } .feedback.bad .verdict { color: var(--red) }
+.nav2 { display: flex; gap: 10px } .nav2 .btn { flex: 1 }
+
+/* Result */
+.result { border-radius: 14px; padding: 22px 18px; text-align: center; display: grid; gap: 6px; color: #fff }
+.result.pass { background: var(--ok) } .result.fail { background: var(--red) }
+.result .big { font-family: var(--f-display); font-weight: 700; font-size: 44px; line-height: 1; letter-spacing: .04em }
+.result .ar { text-align: center }
+.review { display: grid; gap: 10px }
+.rev { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 6px }
+.rev .ans { display: flex; gap: 8px; flex-wrap: wrap; font-size: 14px }
+.rev .ar { font-size: 14px; color: var(--muted) }
+
+/* Signs */
+.signs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+.sg { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 6px; align-content: start }
+.sg svg { width: 76px; height: 76px; justify-self: center }
+.sg b { font-weight: 600; font-size: 15px; line-height: 1.2 }
+.sg .ar { font-size: 13px; color: var(--muted) }
+.cat { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 24px 18px; text-align: center; display: grid; gap: 8px }
+
+/* Tab bar */
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)) }
+.tabs-in { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr) }
+.tabs a { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 9px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; position: relative }
+.tabs a svg { width: 24px; height: 24px }
+.tabs a[aria-current="page"] { color: var(--blue) }
+.tabs a .badge { position: absolute; top: 4px; left: calc(50% + 6px); background: var(--red); color: #fff; font-size: 10px; border-radius: 99px; padding: 0 5px; line-height: 16px; font-variant-numeric: tabular-nums }
+body.in-quiz nav.tabs { display: none }
+body.in-quiz main { padding-bottom: 32px }
+
+@media (prefers-reduced-motion: no-preference) {
+  .qcard, .feedback { animation: rise .18s ease-out }
+  @keyframes rise { from { transform: translateY(6px); opacity: .6 } to { transform: none; opacity: 1 } }
+}
+@media (max-width: 380px) { .qtext { font-size: 19px } .grid30 { gap: 3px } }
+</style>
+
+<header class="top"><div class="top-in">
+  <div class="brand">Patente Facile<small class="ar">تعلم البيرمي ديال إيطاليا</small></div>
+  <div class="plate" aria-label="Patente B"><span>I</span><span>B</span></div>
+</div></header>
+
+<main id="app" aria-live="polite"></main>
+
+<nav class="tabs" aria-label="Sezioni"><div class="tabs-in">
+  <a href="#home" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+  <a href="#argomenti" data-v="argomenti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Argomenti</a>
+  <a href="#segnali" data-v="segnali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l10 17H2z"/><path d="M12 10v4M12 17v.5" stroke-linecap="round"/></svg>Segnali</a>
+  <a href="#errori" data-v="errori"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Errori<span class="badge" id="errBadge" hidden></span></a>
+</div></nav>
+
+<script>
+/* ---------- Road signs (fixed real-world colors, same in both themes) ---------- */
+const R = "#C8102E", B = "#0B4EA2", W = "#FFFFFF", K = "#111111", Y = "#F6C400";
+const ring = inner => `<circle cx="50" cy="50" r="47" fill="${R}"/><circle cx="50" cy="50" r="36" fill="${inner}"/>`;
+const tri = inner => `<path d="M50 5 L96 88 Q97 92 92 92 H8 Q3 92 4 88 Z" fill="${R}"/><path d="M50 22 L82 80 H18 Z" fill="${W}"/>${inner}`;
+const car = (x, c) => `<g fill="${c}"><path d="M${x} 58 v-8 l5-9 h14 l5 9 v8 z"/><circle cx="${x+6}" cy="59" r="3.2"/><circle cx="${x+18}" cy="59" r="3.2"/></g>`;
+const SIGNS = {
+  stop: { n: "Fermarsi e dare precedenza (STOP)", ar: "قف وأعطِ الأولوية (STOP)", c: "Precedenza",
+    svg: `<polygon points="30,2 70,2 98,30 98,70 70,98 30,98 2,70 2,30" fill="${W}"/><polygon points="31,6 69,6 94,31 94,69 69,94 31,94 6,69 6,31" fill="${R}"/><text x="50" y="60" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="27" fill="${W}">STOP</text>` },
+  precedenza: { n: "Dare precedenza", ar: "أعطِ الأولوية", c: "Precedenza",
+    svg: `<path d="M4 10 Q2 6 7 6 H93 Q98 6 96 10 L53 92 Q50 96 47 92 Z" fill="${R}"/><path d="M20 17 H80 L50 74 Z" fill="${W}"/>` },
+  diritto: { n: "Diritto di precedenza", ar: "طريق ذات أولوية", c: "Precedenza",
+    svg: `<rect x="18" y="18" width="64" height="64" rx="4" transform="rotate(45 50 50)" fill="${W}" stroke="${K}" stroke-width="2"/><rect x="31" y="31" width="38" height="38" transform="rotate(45 50 50)" fill="${Y}"/>` },
+  sensovietato: { n: "Senso vietato", ar: "ممنوع الدخول (اتجاه ممنوع)", c: "Divieto",
+    svg: `<circle cx="50" cy="50" r="47" fill="${R}"/><rect x="17" y="41" width="66" height="18" rx="2" fill="${W}"/>` },
+  transito: { n: "Divieto di transito", ar: "ممنوع المرور في الاتجاهين", c: "Divieto", svg: ring(W) },
+  limite50: { n: "Limite massimo di velocità 50 km/h", ar: "السرعة القصوى 50 كلم/س", c: "Divieto",
+    svg: ring(W) + `<text x="50" y="63" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="38" fill="${K}">50</text>` },
+  sorpasso: { n: "Divieto di sorpasso", ar: "ممنوع التجاوز", c: "Divieto", svg: ring(W) + car(23, R) + car(53, K) },
+  sosta: { n: "Divieto di sosta", ar: "ممنوع الوقوف (الركن)", c: "Divieto",
+    svg: ring(B) + `<line x1="25" y1="25" x2="75" y2="75" stroke="${R}" stroke-width="10"/>` },
+  fermata: { n: "Divieto di fermata", ar: "ممنوع التوقف والوقوف", c: "Divieto",
+    svg: ring(B) + `<g stroke="${R}" stroke-width="10"><line x1="25" y1="25" x2="75" y2="75"/><line x1="75" y1="25" x2="25" y2="75"/></g>` },
+  pericolo: { n: "Altri pericoli", ar: "خطر عام (أخطار أخرى)", c: "Pericolo",
+    svg: tri(`<rect x="46" y="38" width="8" height="24" rx="2" fill="${K}"/><circle cx="50" cy="70" r="4.5" fill="${K}"/>`) },
+  curva: { n: "Curva pericolosa a destra", ar: "منعطف خطير إلى اليمين", c: "Pericolo",
+    svg: tri(`<path d="M42 76 V58 Q42 46 54 44 L54 38 L64 47 L54 56 L54 50 Q48 51 48 58 V76 Z" fill="${K}"/>`) },
+  rotatoria: { n: "Rotatoria", ar: "إلزامية الدوران في المدار", c: "Obbligo",
+    svg: `<circle cx="50" cy="50" r="47" fill="${B}"/>` + [0, 120, 240].map(a =>
+      `<g transform="rotate(${a} 50 50)"><path d="M33 34 A23 23 0 0 1 64 30" fill="none" stroke="${W}" stroke-width="7"/><path d="M60 20 L74 33 L56 38 Z" fill="${W}"/></g>`).join("") },
+  sensounico: { n: "Senso unico parallelo", ar: "طريق ذات اتجاه واحد", c: "Indicazione",
+    svg: `<rect x="2" y="26" width="96" height="48" rx="5" fill="${B}"/><path d="M14 44 H62 V34 L86 50 L62 66 V56 H14 Z" fill="${W}"/>` },
+  parcheggio: { n: "Parcheggio", ar: "موقف السيارات", c: "Indicazione",
+    svg: `<rect x="6" y="6" width="88" height="88" rx="10" fill="${B}"/><text x="50" y="76" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="68" fill="${W}">P</text>` }
+};
+const signSvg = (k, label) => `<svg viewBox="0 0 100 100" role="img" aria-label="${label || SIGNS[k].n}">${SIGNS[k].svg}</svg>`;
+
+/* ---------- Topics ---------- */
+const TOPICS = {
+  seg: { n: "Segnali stradali", ar: "علامات الطريق", ic: "pericolo" },
+  pre: { n: "Precedenza e semafori", ar: "الأولوية والإشارات الضوئية", ic: "precedenza" },
+  vel: { n: "Velocità e distanza", ar: "السرعة ومسافة الأمان", ic: "limite50" },
+  sor: { n: "Sorpasso", ar: "التجاوز", ic: "sorpasso" },
+  sos: { n: "Fermata e sosta", ar: "التوقف والركن", ic: "sosta" },
+  luc: { n: "Luci", ar: "الأضواء", ic: "curva" },
+  aut: { n: "Autostrada", ar: "الطريق السيار", ic: "sensounico" },
+  pat: { n: "Patente, punti e alcol", ar: "الرخصة، النقاط والكحول", ic: "stop" },
+  sic: { n: "Sicurezza e cinture", ar: "السلامة وحزام الأمان", ic: "diritto" },
+  inc: { n: "Incidenti e primo soccorso", ar: "الحوادث والإسعافات الأولية", ic: "fermata" },
+  vei: { n: "Veicolo e documenti", ar: "السيارة والوثائق", ic: "parcheggio" }
+};
+
+/* ---------- Questions: [topic, sign|null, Italian statement, answer, Arabic translation, Arabic explanation] ---------- */
+const RAW = [
+["seg","stop","Il segnale raffigurato obbliga a fermarsi in ogni caso all'incrocio",1,"هذه العلامة تُلزم بالتوقف في جميع الحالات عند التقاطع","علامة STOP: التوقف الكامل إجباري دائماً، حتى لو كانت الطريق فارغة، ثم تعطي الأولوية."],
+["seg","stop","Il segnale raffigurato consente di non fermarsi se la strada è libera",0,"هذه العلامة تسمح بعدم التوقف إذا كانت الطريق فارغة","خطأ: مع STOP يجب التوقف دائماً عند خط التوقف."],
+["seg","stop","Il segnale raffigurato ha forma ottagonale",1,"هذه العلامة على شكل مثمّن (8 أضلاع)","صحيح: STOP هي العلامة الوحيدة ذات الشكل المثمّن."],
+["seg","stop","Il segnale di STOP ha forma triangolare",0,"علامة STOP على شكل مثلث","خطأ: شكلها مثمّن. المثلث المقلوب هو علامة 'أعطِ الأولوية'."],
+["seg","precedenza","Il segnale raffigurato obbliga a dare la precedenza ai veicoli provenienti sia da destra sia da sinistra",1,"هذه العلامة تُلزم بإعطاء الأولوية للسيارات القادمة من اليمين ومن اليسار","صحيح: 'Dare precedenza' تعني أن تترك المرور لكل من يأتي من الطريق الأخرى."],
+["seg","precedenza","Il segnale raffigurato obbliga sempre a fermarsi",0,"هذه العلامة تُلزم بالتوقف دائماً","خطأ: تتوقف فقط إذا كانت هناك سيارات قادمة. التوقف الإجباري دائماً هو STOP."],
+["seg","diritto","Il segnale raffigurato indica una strada con diritto di precedenza",1,"هذه العلامة تدل على طريق لها حق الأولوية","صحيح: المعيّن الأصفر يعني أن طريقك لها الأولوية عند التقاطعات."],
+["seg","diritto","Il segnale raffigurato obbliga a dare la precedenza a destra",0,"هذه العلامة تُلزم بإعطاء الأولوية لليمين","خطأ: بالعكس، أنت على طريق ذات أولوية."],
+["seg","sensovietato","Il segnale raffigurato vieta di entrare nella strada nel senso di marcia",1,"هذه العلامة تمنع الدخول إلى الطريق في هذا الاتجاه","صحيح: 'Senso vietato' = ممنوع الدخول، توجد عادة في مدخل طريق ذات اتجاه واحد."],
+["seg","sensovietato","Il segnale raffigurato consente l'accesso ai soli residenti",0,"هذه العلامة تسمح بالدخول للسكان فقط","خطأ: الدخول ممنوع على جميع المركبات إلا إذا كانت هناك لوحة إضافية."],
+["seg","transito","Il segnale raffigurato vieta il transito a tutti i veicoli in entrambi i sensi di marcia",1,"هذه العلامة تمنع مرور جميع المركبات في الاتجاهين","صحيح: الدائرة البيضاء بحافة حمراء = ممنوع المرور في الاتجاهين."],
+["seg","limite50","Il segnale raffigurato indica che non si devono superare i 50 km/h",1,"هذه العلامة تعني أنه لا يجوز تجاوز 50 كلم في الساعة","صحيح: الرقم داخل دائرة حمراء هو السرعة القصوى."],
+["seg","limite50","Il segnale raffigurato indica la velocità minima obbligatoria di 50 km/h",0,"هذه العلامة تدل على السرعة الدنيا الإجبارية 50 كلم/س","خطأ: الدائرة الحمراء = حد أقصى. السرعة الدنيا تكون في دائرة زرقاء."],
+["seg","sorpasso","Il segnale raffigurato indica il divieto di sorpasso",1,"هذه العلامة تدل على منع التجاوز","صحيح: السيارة الحمراء على اليسار تعني ممنوع تجاوز السيارات."],
+["seg","sorpasso","Il segnale raffigurato consente il sorpasso solo a destra",0,"هذه العلامة تسمح بالتجاوز من اليمين فقط","خطأ: التجاوز ممنوع، والتجاوز من اليمين ليس هو القاعدة."],
+["seg","pericolo","Il segnale raffigurato indica un pericolo diverso da quelli indicati da altri segnali",1,"هذه العلامة تدل على خطر غير مذكور في علامات أخرى","صحيح: علامة '!' = أخطار أخرى، وغالباً تكون معها لوحة تشرح الخطر."],
+["seg","pericolo","I segnali di pericolo hanno di norma forma circolare",0,"علامات الخطر عادةً دائرية الشكل","خطأ: علامات الخطر مثلثة بحافة حمراء. الدائرية هي علامات المنع والإلزام."],
+["seg","pericolo","Fuori dai centri abitati i segnali di pericolo sono posti di norma 150 metri prima del pericolo",1,"خارج المدن تُوضع علامات الخطر عادة 150 متراً قبل الخطر","صحيح: 150 م خارج المدن، وأقل داخل المدن."],
+["seg","curva","Il segnale raffigurato preannuncia una curva pericolosa a destra",1,"هذه العلامة تُنبّه إلى منعطف خطير نحو اليمين","صحيح."],
+["seg","curva","In presenza del segnale raffigurato si deve moderare la velocità",1,"عند هذه العلامة يجب تخفيف السرعة","صحيح: قبل المنعطف خفّف السرعة ولا تتجاوز."],
+["seg","sensounico","Il segnale raffigurato indica una strada a senso unico",1,"هذه العلامة تدل على طريق ذات اتجاه واحد","صحيح: كل السيارات تسير في اتجاه السهم."],
+["seg","sensounico","Il segnale raffigurato obbliga a svoltare a destra",0,"هذه العلامة تُلزم بالانعطاف إلى اليمين","خطأ: هي علامة إرشاد مستطيلة (اتجاه واحد)، وليست علامة إلزام دائرية."],
+["seg","parcheggio","Il segnale raffigurato indica un'area destinata al parcheggio",1,"هذه العلامة تدل على مكان مخصص لركن السيارات","صحيح."],
+["seg","sosta","Il segnale raffigurato vieta la sosta ma consente la fermata",1,"هذه العلامة تمنع الركن لكن تسمح بالتوقف القصير","صحيح: خط واحد = ممنوع الركن، يمكنك التوقف لإنزال شخص."],
+["seg","sosta","Il segnale raffigurato vieta anche la fermata",0,"هذه العلامة تمنع حتى التوقف القصير","خطأ: منع التوقف يكون بعلامة X (خطّين)."],
+["seg","fermata","Il segnale raffigurato vieta sia la fermata sia la sosta",1,"هذه العلامة تمنع التوقف والركن معاً","صحيح: علامة X = ممنوع التوقف حتى لثوانٍ."],
+["seg","rotatoria","Il segnale raffigurato obbliga a circolare nella rotatoria nel senso indicato dalle frecce",1,"هذه العلامة تُلزم بالدوران في المدار حسب اتجاه الأسهم","صحيح: العلامات الزرقاء الدائرية هي علامات إلزام."],
+["pre",null,"In un incrocio senza segnali si deve dare la precedenza ai veicoli che provengono da destra",1,"في تقاطع بدون علامات يجب إعطاء الأولوية للسيارات القادمة من اليمين","صحيح: القاعدة العامة في إيطاليا هي الأولوية لليمين."],
+["pre",null,"In un incrocio senza segnali ha la precedenza chi proviene da sinistra",0,"في تقاطع بدون علامات الأولوية لمن يأتي من اليسار","خطأ: الأولوية لمن يأتي من اليمين."],
+["pre",null,"Chi esce da un passo carrabile deve dare la precedenza a chi circola sulla strada",1,"من يخرج من مدخل خاص (كراج) يجب أن يعطي الأولوية لمن يسير في الطريق","صحيح."],
+["pre",null,"Bisogna lasciare libero il passaggio ai veicoli di soccorso con sirena e lampeggiante blu accesi",1,"يجب ترك الطريق لسيارات الإسعاف والشرطة عندما تشغّل الصفارة والضوء الأزرق","صحيح: لها الأولوية دائماً."],
+["pre",null,"Con il semaforo giallo fisso si deve accelerare per passare prima del rosso",0,"مع الضوء الأصفر الثابت يجب الإسراع للمرور قبل الأحمر","خطأ: الأصفر يعني توقف، إلا إذا كنت قريباً جداً ولا تستطيع التوقف بأمان."],
+["pre",null,"Con il semaforo rosso è vietato superare la linea di arresto",1,"مع الضوء الأحمر يُمنع تجاوز خط التوقف","صحيح."],
+["pre",null,"Con il semaforo verde si può entrare nell'incrocio anche se è ingombro di veicoli",0,"مع الضوء الأخضر يمكن الدخول للتقاطع حتى لو كان مزدحماً","خطأ: لا تدخل إذا لم تستطع الخروج من التقاطع، حتى مع الأخضر."],
+["pre",null,"Le segnalazioni degli agenti del traffico prevalgono su quelle dei semafori",1,"إشارات شرطي المرور لها الأسبقية على إشارات الضوء","صحيح: الترتيب: الشرطي ثم الضوء ثم العلامات."],
+["pre",null,"Il vigile con le braccia tese orizzontalmente impone l'arresto a chi gli sta di fronte e di spalle",1,"الشرطي بذراعين ممدودتين أفقياً يوقف من هو أمامه ومن هو خلفه","صحيح: والمرور مسموح لمن يأتي من جانبيه."],
+["pre",null,"Si deve dare la precedenza ai pedoni che attraversano sulle strisce pedonali",1,"يجب إعطاء الأولوية للراجلين الذين يعبرون في ممر الراجلين","صحيح."],
+["pre","precedenza","Se all'ingresso della rotatoria c'è il segnale raffigurato, chi entra deve dare la precedenza a chi circola già nella rotatoria",1,"إذا كانت هذه العلامة عند مدخل المدار، فمن يدخل يعطي الأولوية لمن هو داخل المدار","صحيح."],
+["vel",null,"Sulle autostrade il limite massimo per le autovetture è 130 km/h",1,"في الطريق السيار السرعة القصوى للسيارات 130 كلم/س","صحيح."],
+["vel",null,"Sulle strade extraurbane secondarie il limite massimo per le autovetture è 90 km/h",1,"في الطرق الثانوية خارج المدن السرعة القصوى 90 كلم/س","صحيح."],
+["vel",null,"Sulle strade extraurbane secondarie il limite massimo per le autovetture è 110 km/h",0,"في الطرق الثانوية خارج المدن السرعة القصوى 110 كلم/س","خطأ: هي 90 كلم/س. 110 للطرق الرئيسية خارج المدن."],
+["vel",null,"Sulle strade extraurbane principali il limite massimo per le autovetture è 110 km/h",1,"في الطرق الرئيسية خارج المدن السرعة القصوى 110 كلم/س","صحيح."],
+["vel",null,"Nei centri abitati il limite generale di velocità è 50 km/h",1,"داخل المدن الحد العام للسرعة هو 50 كلم/س","صحيح: يمكن أن يكون مختلفاً فقط إذا وُجدت علامة."],
+["vel",null,"Nei centri abitati il limite generale di velocità è 70 km/h",0,"داخل المدن الحد العام للسرعة 70 كلم/س","خطأ: الحد العام 50 كلم/س."],
+["vel",null,"In caso di pioggia il limite in autostrada per le autovetture scende a 110 km/h",1,"عند المطر تنخفض السرعة القصوى في الطريق السيار إلى 110 كلم/س","صحيح: وفي الطرق الرئيسية خارج المدن تنخفض إلى 90."],
+["vel",null,"Nei primi tre anni di patente B non si possono superare i 100 km/h in autostrada",1,"في السنوات الثلاث الأولى من الرخصة لا يجوز تجاوز 100 كلم/س في الطريق السيار","صحيح: هذا للسائق الجديد (neopatentato)."],
+["vel",null,"Nei primi tre anni di patente B si può circolare a 130 km/h in autostrada",0,"في السنوات الثلاث الأولى يمكن السير بـ130 كلم/س في الطريق السيار","خطأ: الحد للسائق الجديد 100 كلم/س."],
+["vel",null,"Nei primi tre anni di patente B il limite sulle strade extraurbane principali è 90 km/h",1,"في السنوات الثلاث الأولى الحد في الطرق الرئيسية خارج المدن هو 90 كلم/س","صحيح."],
+["vel",null,"Lo spazio di frenatura aumenta se la strada è bagnata",1,"مسافة الفرملة تزيد إذا كانت الطريق مبللة","صحيح: العجلات تمسك أقل في الطريق المبللة."],
+["vel",null,"Con la pioggia lo spazio di frenatura diminuisce",0,"مع المطر تنقص مسافة الفرملة","خطأ: تزيد."],
+["vel",null,"Se la velocità raddoppia, lo spazio di frenatura raddoppia soltanto",0,"إذا تضاعفت السرعة، تتضاعف مسافة الفرملة مرتين فقط","خطأ: تتضاعف تقريباً أربع مرات (مع مربع السرعة)."],
+["vel",null,"La distanza di sicurezza deve aumentare quando la visibilità è scarsa",1,"يجب زيادة مسافة الأمان عندما تكون الرؤية ضعيفة","صحيح."],
+["vel",null,"Il tempo di reazione aumenta se il conducente è stanco o ha bevuto alcolici",1,"وقت ردة الفعل يزيد إذا كان السائق متعباً أو شرب الكحول","صحيح."],
+["vel",null,"Con la nebbia fitta bisogna ridurre la velocità e aumentare la distanza di sicurezza",1,"مع الضباب الكثيف يجب تخفيف السرعة وزيادة مسافة الأمان","صحيح."],
+["vel",null,"Lo spazio di arresto è la somma dello spazio percorso durante il tempo di reazione e dello spazio di frenatura",1,"مسافة التوقف = المسافة خلال وقت ردة الفعل + مسافة الفرملة","صحيح."],
+["sor",null,"Di norma il sorpasso si effettua a sinistra",1,"عادةً يتم التجاوز من اليسار","صحيح."],
+["sor",null,"È vietato sorpassare in prossimità delle curve e dei dossi con scarsa visibilità",1,"يُمنع التجاوز قرب المنعطفات والمرتفعات حيث الرؤية ضعيفة","صحيح."],
+["sor",null,"È consentito sorpassare a destra un veicolo che ha segnalato di voler svoltare a sinistra e si è spostato verso il centro della strada",1,"يُسمح بتجاوز سيارة من اليمين إذا أشارت أنها ستنعطف يساراً وتحركت نحو وسط الطريق","صحيح: هذه من الحالات القليلة للتجاوز من اليمين."],
+["sor",null,"In autostrada il sorpasso a destra è sempre consentito",0,"في الطريق السيار التجاوز من اليمين مسموح دائماً","خطأ: التجاوز يكون من اليسار."],
+["sor",null,"È vietato sorpassare un veicolo che si è fermato per far attraversare i pedoni",1,"يُمنع تجاوز سيارة توقفت لترك الراجلين يعبرون","صحيح: قد يكون هناك راجل أمامها لا تراه."],
+["sor",null,"Durante il sorpasso è consentito superare il limite di velocità",0,"أثناء التجاوز يُسمح بتجاوز حد السرعة","خطأ: حد السرعة يبقى دائماً."],
+["sor",null,"La striscia longitudinale continua può essere oltrepassata per sorpassare",0,"يمكن تجاوز الخط المتصل من أجل التجاوز","خطأ: الخط المتصل لا يُقطع أبداً."],
+["sor",null,"Prima di sorpassare bisogna controllare che nessuno ci stia già sorpassando",1,"قبل التجاوز يجب التأكد أن لا أحد يتجاوزنا","صحيح: انظر في المرآة وشغّل الإشارة."],
+["sor",null,"È vietato sorpassare in prossimità di un passaggio a livello senza barriere",1,"يُمنع التجاوز قرب ممر السكة الحديدية بدون حواجز","صحيح."],
+["sor",null,"Si può sorpassare in un incrocio senza visibilità se si va piano",0,"يمكن التجاوز في تقاطع بدون رؤية إذا كنت تسير ببطء","خطأ: ممنوع التجاوز في التقاطعات (إلا في حالات خاصة)."],
+["sos",null,"Durante la sosta il conducente può allontanarsi dal veicolo",1,"أثناء الركن (sosta) يمكن للسائق أن يبتعد عن السيارة","صحيح: هذا هو الفرق بين sosta و fermata."],
+["sos",null,"La fermata è una breve sospensione della marcia per far salire o scendere persone",1,"التوقف (fermata) هو توقف قصير لصعود أو نزول الأشخاص","صحيح: السائق يبقى قريباً ومستعداً للانطلاق."],
+["sos",null,"Le strisce blu indicano di solito un parcheggio a pagamento",1,"الخطوط الزرقاء تدل عادة على موقف بالأداء","صحيح."],
+["sos",null,"Le strisce bianche indicano sempre un parcheggio a pagamento",0,"الخطوط البيضاء تدل دائماً على موقف بالأداء","خطأ: البيضاء عادةً مجانية، والزرقاء بالأداء."],
+["sos",null,"Le strisce gialle delimitano posti riservati, ad esempio per disabili o per carico e scarico",1,"الخطوط الصفراء تحدد أماكن مخصصة، مثلاً لذوي الإعاقة أو للشحن والتفريغ","صحيح."],
+["sos",null,"È consentito sostare sulle strisce pedonali se si accendono le luci di emergenza",0,"يُسمح بالركن فوق ممر الراجلين إذا شغّلت أضواء الطوارئ","خطأ: ممنوع دائماً."],
+["sos",null,"È vietato sostare in corrispondenza delle fermate degli autobus",1,"يُمنع الركن في محطات الحافلات","صحيح."],
+["sos",null,"È consentito sostare in doppia fila per pochi minuti",0,"يُسمح بالركن في صف ثانٍ لبضع دقائق","خطأ: الركن في صف ثانٍ ممنوع."],
+["luc",null,"Fuori dai centri abitati le luci anabbaglianti devono essere accese anche di giorno",1,"خارج المدن يجب تشغيل الأضواء المنخفضة حتى في النهار","صحيح: في الطرق خارج المدن والطريق السيار."],
+["luc",null,"Le luci abbaglianti vanno sostituite con le anabbaglianti quando si incrocia un altro veicolo",1,"يجب تغيير الأضواء العالية إلى المنخفضة عندما تقابل سيارة أخرى","صحيح: حتى لا تُبهر السائق الآخر."],
+["luc",null,"Le luci abbaglianti si possono usare nei centri abitati ben illuminati",0,"يمكن استعمال الأضواء العالية داخل المدن المضاءة جيداً","خطأ: ممنوع."],
+["luc",null,"Le luci di emergenza si usano quando il veicolo è fermo per guasto e costituisce un pericolo",1,"أضواء الطوارئ (الأربعة) تُستعمل عندما تكون السيارة متوقفة بسبب عطل وتشكل خطراً","صحيح."],
+["luc",null,"La luce posteriore per nebbia si può usare anche con tempo sereno",0,"الضوء الخلفي للضباب يمكن استعماله حتى في الطقس الصافي","خطأ: فقط مع الضباب أو الرؤية الضعيفة جداً، لأنه يُبهر من خلفك."],
+["luc",null,"In galleria è obbligatorio accendere le luci anabbaglianti",1,"في النفق يجب تشغيل الأضواء المنخفضة","صحيح."],
+["luc",null,"Di notte fuori dai centri abitati bastano le luci di posizione per circolare",0,"في الليل خارج المدن تكفي أضواء الموقع للسير","خطأ: يجب الأضواء المنخفضة أو العالية."],
+["aut","sensounico","In autostrada è vietata la retromarcia",1,"في الطريق السيار يُمنع الرجوع إلى الخلف","صحيح: حتى إذا فاتك المخرج، تابع إلى المخرج التالي."],
+["aut",null,"In autostrada è vietata l'inversione del senso di marcia",1,"في الطريق السيار يُمنع الدوران وعكس الاتجاه","صحيح."],
+["aut",null,"La corsia di emergenza può essere usata per superare le code",0,"يمكن استعمال ممر الطوارئ لتجاوز الازدحام","خطأ: فقط للطوارئ والأعطال."],
+["aut",null,"In autostrada si può sostare sulla corsia di emergenza per riposarsi",0,"في الطريق السيار يمكن الوقوف في ممر الطوارئ للراحة","خطأ: للراحة استعمل محطات الاستراحة (area di servizio)."],
+["aut",null,"In autostrada possono circolare le biciclette",0,"في الطريق السيار يمكن للدراجات الهوائية أن تسير","خطأ: ممنوعة، وكذلك الراجلون والدراجات الصغيرة (ciclomotori)."],
+["aut",null,"In autostrada la corsia di destra è quella normale di marcia",1,"في الطريق السيار الممر الأيمن هو ممر السير العادي","صحيح: الممرات اليسرى للتجاوز."],
+["aut",null,"Fuori dai centri abitati, di notte, chi scende dal veicolo fermo sulla carreggiata deve indossare il giubbotto retroriflettente",1,"خارج المدن ليلاً، من ينزل من سيارة متوقفة في الطريق يجب أن يلبس السترة العاكسة","صحيح."],
+["pat",null,"Con la patente B si può guidare un'autovettura a partire da 18 anni",1,"برخصة B يمكن قيادة السيارة ابتداءً من 18 سنة","صحيح."],
+["pat",null,"La patente B permette di guidare gli autobus",0,"رخصة B تسمح بقيادة الحافلات","خطأ: للحافلات يلزم رخصة D."],
+["pat",null,"Il punteggio iniziale della patente è di 20 punti",1,"رصيد النقاط الأولي للرخصة هو 20 نقطة","صحيح."],
+["pat",null,"Per i neopatentati, nei primi tre anni, i punti tolti per una violazione sono raddoppiati",1,"للسائقين الجدد في السنوات الثلاث الأولى، النقاط المسحوبة تكون مضاعفة","صحيح."],
+["pat",null,"Chi perde tutti i punti deve sostenere di nuovo l'esame di idoneità",1,"من يفقد كل النقاط يجب أن يعيد امتحان الكفاءة","صحيح: تسمى revisione della patente."],
+["pat",null,"Chi non commette violazioni per due anni riceve 2 punti in più, fino a un massimo di 30",1,"من لا يرتكب مخالفات لمدة سنتين يحصل على نقطتين إضافيتين، إلى حد أقصى 30","صحيح."],
+["pat",null,"Il limite generale del tasso alcolemico per guidare è 0,5 grammi per litro",1,"الحد العام لنسبة الكحول في الدم للقيادة هو 0.5 غرام في اللتر","صحيح."],
+["pat",null,"I neopatentati nei primi tre anni possono guidare con un tasso alcolemico fino a 0,5 g/l",0,"السائقون الجدد في السنوات الثلاث الأولى يمكنهم القيادة بنسبة كحول حتى 0.5 غ/ل","خطأ: للسائق الجديد ومن هم أقل من 21 سنة: صفر كحول."],
+["pat",null,"I conducenti con meno di 21 anni devono avere un tasso alcolemico pari a zero",1,"السائقون الأقل من 21 سنة يجب أن تكون نسبة الكحول عندهم صفراً","صحيح."],
+["pat",null,"Bere un caffè fa scendere rapidamente il tasso alcolemico",0,"شرب القهوة يُنقص نسبة الكحول بسرعة","خطأ: فقط الوقت يُنقص الكحول من الدم."],
+["pat",null,"L'alcol migliora i riflessi del conducente",0,"الكحول يُحسّن ردود فعل السائق","خطأ: الكحول يُبطئ ردود الفعل ويُضعف الانتباه."],
+["pat",null,"L'esame di teoria della patente B ha 30 domande e si supera con al massimo 3 errori",1,"امتحان النظري لرخصة B فيه 30 سؤالاً وتنجح بـ3 أخطاء على الأكثر","صحيح: 4 أخطاء = رسوب."],
+["pat",null,"Per l'esame di teoria si hanno a disposizione 20 minuti",1,"في امتحان النظري عندك 20 دقيقة","صحيح."],
+["sic",null,"Le cinture di sicurezza vanno allacciate anche sui sedili posteriori",1,"يجب ربط حزام الأمان حتى في المقاعد الخلفية","صحيح."],
+["sic",null,"Le cinture di sicurezza non servono nei brevi percorsi in città",0,"حزام الأمان غير ضروري في المسافات القصيرة داخل المدينة","خطأ: إجباري دائماً."],
+["sic",null,"Se l'auto ha l'airbag non è necessario allacciare le cinture",0,"إذا كانت في السيارة وسادة هوائية فلا داعي لحزام الأمان","خطأ: الوسادة الهوائية تعمل مع الحزام، لا تعوّضه."],
+["sic",null,"Durante la guida è vietato usare il telefono cellulare tenendolo in mano",1,"أثناء القيادة يُمنع استعمال الهاتف وهو في اليد","صحيح."],
+["sic",null,"È consentito telefonare durante la guida usando un dispositivo vivavoce",1,"يُسمح بالاتصال أثناء القيادة باستعمال مكبر الصوت (بدون يدين)","صحيح."],
+["sic",null,"I bambini di altezza inferiore a 1,50 m devono essere assicurati con un seggiolino o adattatore omologato",1,"الأطفال الأقل من 1.50 م يجب أن يجلسوا في كرسي أطفال معتمد","صحيح."],
+["sic",null,"Il seggiolino per bambini non è necessario nei tragitti brevi",0,"كرسي الأطفال غير ضروري في المسافات القصيرة","خطأ: إجباري دائماً."],
+["sic",null,"Il seggiolino rivolto all'indietro non si deve montare davanti a un airbag frontale attivo",1,"كرسي الأطفال المقلوب للخلف لا يُوضع أمام وسادة هوائية أمامية مشغّلة","صحيح: الوسادة قد تُؤذي الطفل."],
+["sic",null,"Il poggiatesta va regolato per proteggere il collo in caso di tamponamento",1,"مسند الرأس يُضبط لحماية العنق في حالة الاصطدام من الخلف","صحيح."],
+["sic",null,"Alcuni farmaci possono ridurre l'attenzione durante la guida",1,"بعض الأدوية يمكن أن تُضعف الانتباه أثناء القيادة","صحيح: اقرأ ورقة الدواء."],
+["sic",null,"Il casco è obbligatorio per chi guida un ciclomotore o una moto",1,"الخوذة إجبارية لمن يقود دراجة نارية","صحيح."],
+["inc",null,"In caso di incidente con feriti è obbligatorio fermarsi e prestare assistenza",1,"في حادث فيه جرحى يجب التوقف وتقديم المساعدة","صحيح: الهروب جريمة."],
+["inc",null,"Il triangolo va posto ad almeno 50 metri dal veicolo fermo",1,"المثلث يُوضع على بعد 50 متراً على الأقل من السيارة المتوقفة","صحيح."],
+["inc",null,"Il triangolo deve essere visibile da almeno 100 metri da chi sopraggiunge",1,"المثلث يجب أن يكون مرئياً من 100 متر على الأقل للقادمين","صحيح."],
+["inc",null,"Il numero unico di emergenza in Italia è il 112",1,"الرقم الموحد للطوارئ في إيطاليا هو 112","صحيح."],
+["inc",null,"Il 112 si può chiamare solo da un telefono fisso",0,"رقم 112 يمكن الاتصال به من الهاتف الثابت فقط","خطأ: من أي هاتف، حتى المحمول."],
+["inc",null,"A un motociclista ferito e privo di sensi bisogna togliere subito il casco",0,"يجب نزع الخوذة فوراً عن سائق دراجة مصاب وفاقد للوعي","خطأ: لا تنزع الخوذة، قد تؤذي العمود الفقري."],
+["inc",null,"Un ferito va spostato subito anche se non c'è pericolo di incendio o di altri incidenti",0,"يجب نقل المصاب فوراً حتى لو لم يكن هناك خطر حريق أو حادث آخر","خطأ: لا تحرّكه إلا عند خطر حقيقي."],
+["inc",null,"A un ferito si possono dare bevande alcoliche per rianimarlo",0,"يمكن إعطاء المصاب مشروبات كحولية لإنعاشه","خطأ: لا تعطه شيئاً يشربه."],
+["vei",null,"La profondità minima del battistrada per le autovetture è 1,6 mm",1,"العمق الأدنى لنقوش العجلات للسيارات هو 1.6 مم","صحيح."],
+["vei",null,"Un pneumatico con il battistrada di 1 mm è regolare",0,"عجلة بعمق نقوش 1 مم قانونية","خطأ: الحد الأدنى 1.6 مم."],
+["vei",null,"Pneumatici sgonfi aumentano i consumi e peggiorano la tenuta di strada",1,"العجلات الناقصة الهواء تزيد الاستهلاك وتُضعف الثبات في الطريق","صحيح."],
+["vei",null,"La prima revisione di un'autovettura nuova si fa dopo 4 anni, poi ogni 2 anni",1,"أول فحص تقني للسيارة الجديدة بعد 4 سنوات، ثم كل سنتين","صحيح."],
+["vei",null,"L'ABS impedisce il bloccaggio delle ruote durante la frenata",1,"نظام ABS يمنع انغلاق العجلات أثناء الفرملة","صحيح: ويسمح لك بالتحكم في المقود."],
+["vei",null,"L'assicurazione RCA è obbligatoria per circolare",1,"التأمين RCA إجباري للسير في الطريق","صحيح."],
+["vei",null,"L'aquaplaning è più probabile con pneumatici consumati e velocità elevata",1,"الانزلاق فوق الماء (aquaplaning) أكثر احتمالاً مع عجلات مستهلكة وسرعة عالية","صحيح."],
+["vei",null,"Il carico che sporge posteriormente deve essere segnalato con un pannello a strisce bianche e rosse",1,"الحمولة البارزة من الخلف يجب الإشارة إليها بلوحة مخططة بالأبيض والأحمر","صحيح."],
+["vei",null,"Durante la guida bisogna avere con sé la patente e la carta di circolazione",1,"أثناء القيادة يجب أن تحمل معك الرخصة والبطاقة الرمادية (carta di circolazione)","صحيح."]
+];
+const Q = RAW.map((r, i) => ({ id: i, t: r[0], s: r[1], q: r[2], a: !!r[3], ar: r[4], e: r[5] }));
+
+/* ---------- Storage (per-device progress) ---------- */
+const KEY = "patente-facile-v1";
+let store = { exams: [], wrong: [], right: {} };
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) store = Object.assign(store, s); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+let showAr = true; try { showAr = localStorage.getItem(KEY + "-ar") !== "0"; } catch (e) {}
+function record(q, ok) {
+  const w = new Set(store.wrong);
+  if (ok) { w.delete(q.id); store.right[q.id] = (store.right[q.id] || 0) + 1; } else w.add(q.id);
+  store.wrong = [...w]; save();
+}
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = s => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+let session = null, timerId = null;
+
+function updateBadge() {
+  const b = $("#errBadge"); const n = store.wrong.length;
+  b.hidden = !n; b.textContent = n;
+}
+
+/* ---------- Views ---------- */
+function viewHome() {
+  const ex = store.exams, passed = ex.filter(x => x.passed).length;
+  const seen = Object.keys(store.right).length;
+  const last = ex.slice(-8);
+  app.innerHTML = `
+    <section class="hero-card">
+      <div><div class="eyebrow">Esame di teoria · Patente B</div>
+      <h2>Simulazione d'esame</h2>
+      <p class="sub ar">امتحان تجريبي بحال الامتحان الحقيقي: جاوب بـ Vero (صحيح) ولا Falso (خطأ)</p></div>
+      <div class="rules">
+        <div class="rule"><b>30</b><span>domande</span></div>
+        <div class="rule"><b>20′</b><span>minuti</span></div>
+        <div class="rule"><b>3</b><span>errori max</span></div>
+      </div>
+      <button class="btn btn-primary" id="goExam">Inizia l'esame <span class="ar">ابدأ</span></button>
+    </section>
+    <div class="stats">
+      <div class="stat"><b>${ex.length}</b><span>esami fatti</span></div>
+      <div class="stat"><b>${passed}</b><span>promossi</span></div>
+      <div class="stat"><b>${seen}/${Q.length}</b><span>domande giuste</span></div>
+    </div>
+    ${last.length ? `<div style="display:grid;gap:8px"><div class="eyebrow">Ultimi esami · errori</div><div class="history">${last.map(x => `<span class="pill ${x.passed ? "ok" : "bad"}">${x.errors} err</span>`).join("")}</div></div>` : ""}
+    <div class="nav2">
+      <a class="btn btn-blue" href="#argomenti" style="text-decoration:none">Allenati <span class="ar">تمرّن</span></a>
+      <a class="btn btn-ghost" href="#errori" style="text-decoration:none">Errori <span class="ar">أخطائي</span></a>
+    </div>
+    <p class="sub" style="font-size:13px">I tuoi progressi restano salvati su questo telefono. <span class="ar" style="display:block;text-align:left">تقدّمك محفوظ في هذا الهاتف.</span></p>`;
+  $("#goExam").onclick = startExam;
+}
+
+function viewTopics() {
+  const rows = Object.entries(TOPICS).map(([k, t]) => {
+    const qs = Q.filter(q => q.t === k), ok = qs.filter(q => store.right[q.id]).length;
+    const p = Math.round(ok / qs.length * 100);
+    return `<button class="row" data-t="${k}"><span class="ic">${signSvg(t.ic, "")}</span>
+      <span class="txt"><b>${t.n}</b><span class="ar">${t.ar}</span></span>
+      <span class="meter"><small>${ok}/${qs.length}</small><i style="--p:${p}%"></i></span></button>`;
+  }).join("");
+  app.innerHTML = `<div><h2>Argomenti</h2><p class="sub ar">اختر موضوعاً وتمرّن. بعد كل جواب تشوف الشرح.</p></div>
+    <button class="btn btn-blue" id="all">Tutte le domande (${Q.length}) <span class="ar">كل الأسئلة</span></button>
+    <div class="list">${rows}</div>`;
+  $("#all").onclick = () => startPractice(shuffle(Q), "Tutte le domande");
+  app.querySelectorAll(".row").forEach(b => b.onclick = () => startPractice(shuffle(Q.filter(q => q.t === b.dataset.t)), TOPICS[b.dataset.t].n));
+}
+
+function viewSigns() {
+  const cats = ["Pericolo", "Precedenza", "Divieto", "Obbligo", "Indicazione"];
+  const arCat = { Pericolo: "الخطر — مثلث أحمر", Precedenza: "الأولوية", Divieto: "المنع — دائرة حمراء", Obbligo: "الإلزام — دائرة زرقاء", Indicazione: "الإرشاد — مستطيل أزرق" };
+  app.innerHTML = `<div><h2>Segnali</h2><p class="sub ar">أهم علامات الطريق في إيطاليا. الشكل واللون يقولان لك نوع العلامة.</p></div>` +
+    cats.map(c => `<div style="display:grid;gap:8px"><div><span class="cat">${c}</span> <span class="ar" style="font-size:13px;color:var(--muted)">· ${arCat[c]}</span></div>
+      <div class="signs">${Object.entries(SIGNS).filter(([, s]) => s.c === c).map(([k, s]) => `<div class="sg">${signSvg(k)}<b>${s.n}</b><span class="ar">${s.ar}</span></div>`).join("")}</div></div>`).join("");
+}
+
+function viewErrors() {
+  const w = Q.filter(q => store.wrong.includes(q.id));
+  if (!w.length) {
+    app.innerHTML = `<div><h2>Errori</h2></div><div class="empty"><h3>Nessun errore da ripassare</h3>
+      <p class="sub ar">ما عندك حتى خطأ دابا. الأسئلة لي غلطتي فيها كتجي هنا باش تعاودها.</p>
+      <a class="btn btn-blue" href="#argomenti" style="text-decoration:none">Allenati</a></div>`;
+    return;
+  }
+  app.innerHTML = `<div><h2>Errori · ${w.length}</h2><p class="sub ar">الأسئلة لي غلطتي فيها. إلى جاوبتي صح كتختفي من هنا.</p></div>
+    <button class="btn btn-primary" id="redo">Ripassa gli errori <span class="ar">عاود الأخطاء</span></button>
+    <div class="review">${w.map(revCard).join("")}</div>`;
+  $("#redo").onclick = () => startPractice(shuffle(w), "Ripasso errori");
+}
+
+const revCard = (q, given) => `<div class="rev"><span class="cat">${TOPICS[q.t].n}</span><b>${esc(q.q)}</b>
+  <div class="ans"><span class="pill ok">Giusta: ${q.a ? "VERO" : "FALSO"}</span>${given === undefined ? "" : given === null ? `<span class="pill bad">Non risposta</span>` : `<span class="pill bad">Tua: ${given ? "VERO" : "FALSO"}</span>`}</div>
+  <span class="ar">${esc(q.e)}</span></div>`;
+
+/* ---------- Quiz engine ---------- */
+function startExam() {
+  session = { mode: "exam", title: "Esame", qs: shuffle(Q).slice(0, 30), ans: Array(30).fill(null), i: 0, left: 20 * 60 };
+  clearInterval(timerId);
+  timerId = setInterval(() => { session.left--; const t = $("#timer"); if (t) { t.textContent = fmt(session.left); t.classList.toggle("low", session.left <= 120); } if (session.left <= 0) finishExam(); }, 1000);
+  renderQuiz();
+}
+function startPractice(qs, title) { session = { mode: "practice", title, qs, ans: Array(qs.length).fill(null), i: 0, ok: 0 }; renderQuiz(); }
+
+function renderQuiz() {
+  document.body.classList.add("in-quiz");
+  const s = session, q = s.qs[s.i], a = s.ans[s.i], exam = s.mode === "exam";
+  const answered = a !== null, fb = !exam && answered;
+  const cls = v => fb ? (v === q.a ? "right" : (a === v ? "wrong" : "")) : (a === v ? "sel" : "");
+  app.innerHTML = `
+    <div class="qbar"><button class="btn btn-ghost" id="quit" style="min-height:40px;padding:6px 12px;font-size:16px">✕ Esci</button>
+      <span class="count">${s.i + 1}<span style="color:var(--muted)">/${s.qs.length}</span></span>
+      ${exam ? `<span class="timer${s.left <= 120 ? " low" : ""}" id="timer">${fmt(s.left)}</span>` : `<span class="timer">✓ ${s.ok}</span>`}</div>
+    ${exam ? `<div class="grid30">${s.qs.map((_, k) => `<button data-k="${k}" class="${s.ans[k] !== null ? "done" : ""}${k === s.i ? " cur" : ""}" aria-label="Domanda ${k + 1}">${k + 1}</button>`).join("")}</div>` : ""}
+    <article class="qcard">
+      <div class="qtopic"><span class="cat">${TOPICS[q.t].n}</span><button class="toggle" id="tgl" aria-pressed="${showAr}">عربي</button></div>
+      ${q.s ? `<div class="sign-wrap">${signSvg(q.s, "Segnale")}</div>` : ""}
+      <p class="qtext">${esc(q.q)}</p>
+      ${showAr ? `<p class="qar ar">${esc(q.ar)}</p>` : ""}
+    </article>
+    <div class="vf">
+      <button id="bV" class="${cls(true)}" ${fb ? "disabled" : ""}><b>VERO</b><span>صحيح</span></button>
+      <button id="bF" class="${cls(false)}" ${fb ? "disabled" : ""}><b>FALSO</b><span>خطأ</span></button>
+    </div>
+    ${fb ? `<div class="feedback ${a === q.a ? "ok" : "bad"}"><span class="verdict">${a === q.a ? "Esatto!" : "Sbagliato"} · ${q.a ? "VERO" : "FALSO"}</span><span class="ar">${esc(q.e)}</span></div>` : ""}
+    <div class="nav2">
+      ${exam ? `<button class="btn btn-ghost" id="prev" ${s.i === 0 ? "disabled" : ""}>‹ Indietro</button>` : ""}
+      ${exam ? `<button class="btn btn-blue" id="next">${s.i === s.qs.length - 1 ? "Fine" : "Avanti ›"}</button>`
+             : (fb ? `<button class="btn btn-blue" id="next">${s.i === s.qs.length - 1 ? "Risultato" : "Avanti ›"}</button>` : "")}
+    </div>
+    ${exam ? `<button class="btn btn-primary" id="submit">Consegna (${s.ans.filter(x => x !== null).length}/30) <span class="ar">سلّم الامتحان</span></button>` : ""}`;
+
+  const pick = v => {
+    if (exam) { s.ans[s.i] = v; if (s.i < s.qs.length - 1) s.i++; renderQuiz(); return; }
+    if (answered) return;
+    s.ans[s.i] = v; const ok = v === q.a; if (ok) s.ok++; record(q, ok); updateBadge(); renderQuiz();
+  };
+  $("#bV").onclick = () => pick(true); $("#bF").onclick = () => pick(false);
+  $("#tgl").onclick = () => { showAr = !showAr; try { localStorage.setItem(KEY + "-ar", showAr ? "1" : "0"); } catch (e) {} renderQuiz(); };
+  $("#quit").onclick = () => { clearInterval(timerId); session = null; document.body.classList.remove("in-quiz"); route(); };
+  const nx = $("#next");
+  if (nx) nx.onclick = () => { if (s.i < s.qs.length - 1) { s.i++; renderQuiz(); } else exam ? finishExam() : finishPractice(); };
+  const pv = $("#prev"); if (pv) pv.onclick = () => { s.i--; renderQuiz(); };
+  const sb = $("#submit"); if (sb) sb.onclick = finishExam;
+  app.querySelectorAll(".grid30 button").forEach(b => b.onclick = () => { s.i = +b.dataset.k; renderQuiz(); });
+  window.scrollTo(0, 0);
+}
+
+function finishExam() {
+  clearInterval(timerId);
+  const s = session; if (!s) return;
+  const wrong = [];
+  s.qs.forEach((q, k) => { const ok = s.ans[k] === q.a; record(q, ok); if (!ok) wrong.push(k); });
+  const pass = wrong.length <= 3;
+  store.exams.push({ d: Date.now(), errors: wrong.length, passed: pass }); save(); updateBadge();
+  session = null;
+  app.innerHTML = `
+    <div class="result ${pass ? "pass" : "fail"}"><span class="big">${pass ? "Promosso" : "Respinto"}</span>
+      <span>${wrong.length} ${wrong.length === 1 ? "errore" : "errori"} su 30 · massimo 3</span>
+      <span class="ar">${pass ? "مبروك! نجحت في الامتحان التجريبي" : "ما نجحتيش هاد المرة. راجع الأخطاء وعاود"}</span></div>
+    <div class="nav2"><button class="btn btn-primary" id="again">Nuovo esame</button><a class="btn btn-ghost" href="#home" style="text-decoration:none">Home</a></div>
+    ${wrong.length ? `<h3>Da ripassare</h3><div class="review">${wrong.map(k => revCard(s.qs[k], s.ans[k])).join("")}</div>` : ""}`;
+  $("#again").onclick = startExam;
+  window.scrollTo(0, 0);
+}
+function finishPractice() {
+  const s = session; session = null;
+  app.innerHTML = `<div class="result ${s.ok / s.qs.length >= .9 ? "pass" : "fail"}"><span class="big">${s.ok}/${s.qs.length}</span>
+    <span>${esc(s.title)}</span><span class="ar">${s.ok === s.qs.length ? "ممتاز! كل الأجوبة صحيحة" : "الأسئلة لي غلطتي فيها راهم ف صفحة الأخطاء"}</span></div>
+    <div class="nav2"><a class="btn btn-blue" href="#argomenti" style="text-decoration:none">Argomenti</a><a class="btn btn-ghost" href="#errori" style="text-decoration:none">Errori</a></div>`;
+}
+
+/* ---------- Routing ---------- */
+const VIEWS = { home: viewHome, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
+function route() {
+  if (session) return;
+  document.body.classList.remove("in-quiz");
+  const v = VIEWS[location.hash.slice(1)] ? location.hash.slice(1) : "home";
+  document.querySelectorAll(".tabs a").forEach(a => a.dataset.v === v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", () => { if (session && session.mode === "exam") return; session = null; clearInterval(timerId); route(); });
+route();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "Patente Facile",
+  "short_name": "Patente",
+  "lang": "it",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#EDF1F7",
+  "theme_color": "#0B4EA2"
+}
