@@ -158,6 +158,43 @@ h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0
 .hello { display: flex; align-items: center; gap: 12px }
 .hello .av { margin: 0; width: 48px; height: 48px; border-color: var(--line); background: var(--blue) }
 .confirm { background: var(--bad-soft); border-radius: 12px; padding: 14px; display: grid; gap: 10px }
+.ring-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; gap: 16px; align-items: center }
+.ring { width: 96px; height: 96px; flex: none; position: relative }
+.ring svg { width: 100%; height: 100% }
+.ring b { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-display); font-size: 28px; font-variant-numeric: tabular-nums }
+.ring-card .txt { flex: 1; min-width: 0; display: grid; gap: 4px }
+.ring-card .txt h3 { font-size: 18px }
+.kv { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; color: var(--muted) }
+.kv b { color: var(--ink); font-variant-numeric: tabular-nums }
+.chart-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px }
+.chart-card svg { width: 100%; height: auto; display: block }
+.chart-card .bar { cursor: pointer }
+.chart-card .bar:focus-visible { outline: none; stroke: var(--ink); stroke-width: 2 }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted) }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px }
+.tip { font-size: 14px; min-height: 20px; color: var(--ink); font-variant-numeric: tabular-nums }
+.foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 13px; padding-top: 8px }
+.foot a { color: var(--muted); text-decoration: none; font-weight: 600 }
+.foot a:hover { color: var(--blue) }
+.setting { display: flex; align-items: center; gap: 12px; padding: 14px; border-top: 1px solid var(--line) }
+.setting:first-child { border-top: 0 }
+.setting .txt { flex: 1; min-width: 0; display: grid; gap: 1px }
+.setting .txt b { font-weight: 600 }
+.setting .txt .ar { font-size: 13px; color: var(--muted); text-align: left }
+.switch { width: 50px; height: 30px; border-radius: 99px; background: var(--line); position: relative; flex: none; transition: background .15s }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 99px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .15s }
+.switch[aria-checked="true"] { background: var(--blue) }
+.switch[aria-checked="true"]::after { transform: translateX(20px) }
+.seg { display: inline-flex; background: var(--chip); border-radius: 10px; padding: 3px; flex: none }
+.seg button { padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted) }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12) }
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px }
+.doc section { display: grid; gap: 4px }
+.doc h3 { font-size: 17px }
+.doc p { margin: 0; line-height: 1.55 }
+.doc .ar h3, .doc.ar h3 { font-family: var(--f-ar); text-transform: none; letter-spacing: 0 }
+.logo { width: 88px; height: 88px; border-radius: 22px; overflow: hidden; flex: none }
+.logo svg { width: 100%; height: 100% }
 .empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 24px 18px; text-align: center; display: grid; gap: 8px }
 
 /* Tab bar */
@@ -478,15 +515,34 @@ const loadVoices = () => { try { voices = TTS ? TTS.getVoices() : []; } catch (e
 loadVoices(); if (TTS) TTS.onvoiceschanged = loadVoices;
 const voiceFor = lang => voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang));
 let speakId = 0;
-function stopSpeak() { speakId++; try { TTS && TTS.cancel(); } catch (e) {} document.querySelectorAll(".spk.on").forEach(b => b.classList.remove("on")); document.querySelectorAll(".pt.playing").forEach(b => b.classList.remove("playing")); }
+function stopSpeak() { speakId++; nativeDone = null; try { TTS && TTS.cancel(); } catch (e) {} try { NATIVE && NATIVE.stop(); } catch (e) {} document.querySelectorAll(".spk.on").forEach(b => b.classList.remove("on")); document.querySelectorAll(".pt.playing").forEach(b => b.classList.remove("playing")); }
 /* parts: [{text, lang:"it"|"ar", el?}] ; btn shows playing state */
+const NATIVE = window.AndroidApp || null;   /* bridge provided by the Android app */
+let nativeDone = null;
+window.__ttsDone = uid => { if (nativeDone) nativeDone(uid); };
 function speak(parts, btn) {
   if (btn && btn.classList.contains("on")) { stopSpeak(); return; }
   stopSpeak();
-  if (!TTS) { toast("Audio non disponibile su questo browser · الصوت غير متوفر"); return; }
-  loadVoices();
+  if (!TTS && !NATIVE) { toast("Audio non disponibile su questo dispositivo · الصوت غير متوفر"); return; }
   const id = speakId;
-  const list = parts.filter(p => p.lang === "it" || (showAr && (voiceFor("ar") || !voices.length)));
+  let hasAr = false;
+  if (NATIVE) { try { hasAr = NATIVE.ttsAvailable("ar"); } catch (e) {} } else { loadVoices(); hasAr = !!voiceFor("ar") || !voices.length; }
+  const list = parts.filter(p => p.lang === "it" || (showAr && hasAr));
+  if (NATIVE) {
+    if (btn) btn.classList.add("on");
+    let i = 0;
+    const nextN = () => {
+      document.querySelectorAll(".pt.playing").forEach(b => b.classList.remove("playing"));
+      if (id !== speakId) return;
+      if (i >= list.length) { if (btn) btn.classList.remove("on"); nativeDone = null; return; }
+      const p = list[i++], uid = id + "_" + i;
+      if (p.el) p.el.classList.add("playing");
+      nativeDone = u => { if (u === uid) nextN(); };
+      try { NATIVE.speak(p.text, p.lang, uid, (p.lang === "it" ? 0.92 : 0.95) * prefs.rate); } catch (e) { nextN(); }
+    };
+    nextN();
+    return;
+  }
   if (btn) btn.classList.add("on");
   let i = 0;
   const next = () => {
@@ -498,7 +554,7 @@ function speak(parts, btn) {
     const u = new SpeechSynthesisUtterance(p.text);
     u.lang = p.lang === "it" ? "it-IT" : "ar-SA";
     const v = voiceFor(p.lang); if (v) u.voice = v;
-    u.rate = p.lang === "it" ? 0.92 : 0.95;
+    u.rate = (p.lang === "it" ? 0.92 : 0.95) * prefs.rate;
     u.onend = next; u.onerror = next;
     TTS.speak(u);
   };
@@ -511,6 +567,53 @@ function toast(msg) {
 }
 const SPK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`;
 
+/* ---------- App info: fill developer + email before publishing ---------- */
+const APP = { name: "Patente Facile", version: "1.0.0", developer: "Baday", email: "LA_TUA_EMAIL@gmail.com", updated: "22 novembre 2026", updatedAr: "22 نونبر 2026" };
+const LOGO = `<svg viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" fill="#0B4EA2"/><rect x="31" y="31" width="46" height="46" rx="4" transform="rotate(45 54 54)" fill="#FFFFFF" stroke="#111" stroke-width="1.5"/><rect x="40" y="40" width="28" height="28" transform="rotate(45 54 54)" fill="#F6C400"/></svg>`;
+
+const DOCS = {
+  privacy: { t: "Informativa sulla privacy", ta: "سياسة الخصوصية",
+    it: [
+      ["Chi siamo", () => `${APP.name} è un'app per studiare la teoria della patente B, sviluppata da ${APP.developer}. Per qualsiasi domanda sulla privacy scrivi a ${APP.email}.`],
+      ["Nessun account online", () => "L'app non ha server e non richiede un account online. Non inviamo a nessuno i dati che inserisci."],
+      ["Dati salvati sul tuo telefono", () => "Il profilo (nome, Gmail o numero di telefono, foto, data dell'esame e password) e i risultati dei quiz restano solo nella memoria del tuo dispositivo. La password non viene salvata in chiaro ma come impronta crittografica (hash SHA-256)."],
+      ["Cosa non facciamo", () => "Non mostriamo pubblicità, non usiamo strumenti di statistica o di tracciamento e non vendiamo né condividiamo dati con terzi."],
+      ["Foto e permessi", () => "La foto del profilo la scegli tu dalla galleria e resta sul telefono. L'app per Android non chiede l'accesso a internet, alla fotocamera, ai contatti o alla posizione."],
+      ["Audio", () => "Per leggere lezioni e domande l'app usa il motore di sintesi vocale del tuo dispositivo. Vengono letti solo i testi dell'app, non i tuoi dati personali."],
+      ["Versione web", () => "Se usi l'app dal browser, i caratteri tipografici vengono scaricati da Google Fonts: in quel momento Google riceve l'indirizzo IP del tuo dispositivo."],
+      ["Cancellare i dati", () => "Puoi eliminare un profilo da Profilo > Elimina profilo, tutti i dati da Impostazioni > Cancella tutti i dati, oppure disinstallando l'app."],
+      ["Minori", () => "L'app è adatta a chi si prepara all'esame della patente. Non raccogliamo dati personali di nessuno, minori compresi."],
+      ["Modifiche", () => `Se cambiamo questa informativa aggiorneremo questa pagina e la data. Ultimo aggiornamento: ${APP.updated}.`]
+    ],
+    ar: [
+      ["من نحن", () => `${APP.name} تطبيق لتعلم امتحان النظري لرخصة السياقة B، طوّره ${APP.developer}. لأي سؤال حول الخصوصية راسلنا على ${APP.email}.`],
+      ["بدون حساب على الإنترنت", () => "التطبيق ليس له خادم ولا يحتاج حساباً على الإنترنت. لا نرسل لأحد المعلومات التي تكتبها."],
+      ["معلوماتك تبقى في هاتفك", () => "الملف الشخصي (الاسم، الجيميل أو رقم الهاتف، الصورة، تاريخ الامتحان وكلمة السر) ونتائج الاختبارات تبقى فقط في ذاكرة جهازك. كلمة السر لا تُحفظ كما هي، بل كبصمة مشفّرة (SHA-256)."],
+      ["ما لا نفعله", () => "لا نعرض إعلانات، لا نستعمل أدوات إحصاء أو تتبّع، ولا نبيع ولا نشارك أي معلومات مع أي طرف."],
+      ["الصورة والأذونات", () => "صورة الملف تختارها أنت من المعرض وتبقى في الهاتف. تطبيق أندرويد لا يطلب الإنترنت ولا الكاميرا ولا جهات الاتصال ولا الموقع."],
+      ["الصوت", () => "لقراءة الدروس والأسئلة يستعمل التطبيق محرك تحويل النص إلى كلام الموجود في جهازك. يُقرأ فقط نص التطبيق، وليس معلوماتك الشخصية."],
+      ["النسخة على المتصفح", () => "إذا استعملت التطبيق من المتصفح، تُحمَّل الخطوط من Google Fonts، وفي تلك اللحظة تستقبل Google عنوان IP الخاص بجهازك."],
+      ["حذف المعلومات", () => "يمكنك حذف ملف من: الملف الشخصي > حذف الحساب، أو حذف كل شيء من: الإعدادات > مسح كل المعلومات، أو بإزالة التطبيق."],
+      ["القاصرون", () => "التطبيق مناسب لكل من يستعد لامتحان الرخصة. لا نجمع معلومات شخصية لأي أحد، بما في ذلك القاصرين."],
+      ["التغييرات", () => `إذا غيّرنا هذه السياسة سنحدّث هذه الصفحة والتاريخ. آخر تحديث: ${APP.updatedAr}.`]
+    ] },
+  termini: { t: "Termini d'uso", ta: "شروط الاستعمال",
+    it: [
+      ["App non ufficiale", () => `${APP.name} non è un'app ufficiale e non è collegata al Ministero delle Infrastrutture e dei Trasporti, alla Motorizzazione Civile o ad altri enti pubblici.`],
+      ["Contenuti", () => "Domande, lezioni e spiegazioni sono scritte in modo indipendente sulla base del Codice della Strada. Non sono le domande ufficiali dell'esame. I segnali sono illustrazioni semplificate."],
+      ["Nessuna garanzia", () => "Facciamo il possibile perché i contenuti siano corretti e aggiornati, ma possono contenere errori. L'app non garantisce il superamento dell'esame: studia anche con il manuale ufficiale e con la tua autoscuola."],
+      ["Uso personale", () => "Puoi usare l'app per lo studio personale. Non è permesso copiare o rivendere i contenuti senza autorizzazione."],
+      ["Contatti", () => `Per segnalare un errore o per domande scrivi a ${APP.email}.`]
+    ],
+    ar: [
+      ["تطبيق غير رسمي", () => `${APP.name} ليس تطبيقاً رسمياً، ولا علاقة له بوزارة البنية التحتية والنقل الإيطالية ولا بـ Motorizzazione Civile ولا بأي جهة عمومية.`],
+      ["المحتوى", () => "الأسئلة والدروس والشروحات مكتوبة بشكل مستقل اعتماداً على قانون السير الإيطالي. ليست هي الأسئلة الرسمية للامتحان. والعلامات رسوم مبسّطة."],
+      ["بدون ضمان", () => "نبذل جهدنا ليكون المحتوى صحيحاً ومحدّثاً، لكنه قد يحتوي على أخطاء. التطبيق لا يضمن النجاح في الامتحان: ادرس أيضاً بالكتاب الرسمي ومع مدرسة السياقة."],
+      ["استعمال شخصي", () => "يمكنك استعمال التطبيق للدراسة الشخصية. لا يُسمح بنسخ المحتوى أو بيعه بدون إذن."],
+      ["التواصل", () => `للإبلاغ عن خطأ أو لأي سؤال راسلنا على ${APP.email}.`]
+    ] }
+};
+
 /* ---------- Storage (per-device progress) ---------- */
 const KEY = "patente-facile-v1";
 const ls = {
@@ -522,6 +625,16 @@ const ls = {
 let acct = { profiles: [], current: null };
 try { const a = JSON.parse(ls.get(KEY + "-profiles") || "null"); if (a) acct = Object.assign(acct, a); } catch (e) {}
 const saveAcct = () => ls.set(KEY + "-profiles", JSON.stringify(acct));
+let prefs = { rate: 1, theme: "auto" };
+try { const pr = JSON.parse(ls.get(KEY + "-prefs") || "null"); if (pr) prefs = Object.assign(prefs, pr); } catch (e) {}
+const savePrefs = () => ls.set(KEY + "-prefs", JSON.stringify(prefs));
+let themeTouched = false;
+function applyTheme() {
+  const r = document.documentElement;
+  if (prefs.theme === "auto") { if (themeTouched) r.removeAttribute("data-theme"); }
+  else { r.setAttribute("data-theme", prefs.theme); themeTouched = true; }
+}
+applyTheme();
 let me = null, locked = null, store;
 const storeKey = () => me ? KEY + "-p-" + me.id : KEY;
 function loadStore() { store = { exams: [], wrong: [], right: {} }; try { const s = JSON.parse(ls.get(storeKey()) || "null"); if (s) store = Object.assign(store, s); } catch (e) {} }
@@ -577,19 +690,16 @@ function viewHome() {
       </div>
       <button class="btn btn-primary" id="goExam">Inizia l'esame <span class="ar">ابدأ</span></button>
     </section>
-    <div class="stats">
-      <div class="stat"><b>${ex.length}</b><span>esami fatti</span></div>
-      <div class="stat"><b>${passed}</b><span>promossi</span></div>
-      <div class="stat"><b>${seen}/${Q.length}</b><span>domande giuste</span></div>
-    </div>
-    ${last.length ? `<div style="display:grid;gap:8px"><div class="eyebrow">Ultimi esami · errori</div><div class="history">${last.map(x => `<span class="pill ${x.passed ? "ok" : "bad"}">${x.errors} err</span>`).join("")}</div></div>` : ""}
+    ${readiness(ex, passed)}
+    ${examChart(ex)}
     <a class="btn btn-blue" href="#corsi" style="text-decoration:none">Studia i corsi <span class="ar">الدروس مع الصوت</span></a>
     <div class="nav2">
       <a class="btn btn-ghost" href="#argomenti" style="text-decoration:none">Allenati <span class="ar">تمرّن</span></a>
       <a class="btn btn-ghost" href="#errori" style="text-decoration:none">Errori <span class="ar">أخطائي</span></a>
     </div>
-    <p class="sub" style="font-size:13px">I tuoi progressi restano salvati su questo telefono. <span class="ar" style="display:block;text-align:left">تقدّمك محفوظ في هذا الهاتف.</span></p>`;
+    ${footer()}`;
   $("#goExam").onclick = startExam;
+  bindChart();
 }
 
 function profileForm(p) {
@@ -678,8 +788,11 @@ function viewProfile() {
         <div class="stats"><div class="stat"><b>${ex.length}</b><span>esami</span></div><div class="stat"><b>${ex.filter(x => x.passed).length}</b><span>promossi</span></div><div class="stat"><b>${best === null ? "–" : best}</b><span>meno errori</span></div></div>
         <div class="nav2"><button class="btn btn-blue" id="pEdit">Modifica <span class="ar">تعديل</span></button><button class="btn btn-ghost" id="pOut">Esci <span class="ar">خروج</span></button></div>
       </div>
+      ${examChart(ex)}
+      <a class="btn btn-ghost" href="#impostazioni" style="text-decoration:none">Impostazioni <span class="ar">الإعدادات</span></a>
       <div id="delZone"><button class="btn btn-ghost" id="pDel" style="width:100%;color:var(--red)">Elimina profilo <span class="ar">حذف الحساب</span></button></div>
       <p class="note">${me.hash ? "Profilo protetto da password." : "Profilo senza password: chiunque usi questo telefono può aprirlo."} Il profilo e i progressi sono salvati solo su questo telefono. <span class="ar" style="display:block;text-align:left">الحساب والتقدم محفوظين غير ف هاد التيليفون.</span></p>`;
+    bindChart();
     $("#pEdit").onclick = () => { app.innerHTML = profileForm(me); bindProfileForm(me); };
     $("#pOut").onclick = () => { me = null; acct.current = null; saveAcct(); loadStore(); renderAvatar(); viewProfile(); };
     $("#pDel").onclick = () => {
@@ -695,9 +808,106 @@ function viewProfile() {
   app.innerHTML = `<div><h2>Profilo</h2><p class="sub ar">سجّل باش يتحفظ التقدم ديالك. كل واحد ف العائلة يقدر يدير الحساب ديالو ف نفس التيليفون.</p></div>
     ${list ? `<div style="display:grid;gap:8px"><div class="eyebrow">Profili su questo telefono</div><div class="list">${list}</div></div>` : ""}
     ${profileForm(null)}
+    ${footer()}
     <p class="note">Ora stai usando l'app come ospite. Il profilo resta solo su questo telefono: la Gmail o il numero servono come informazione, non per ricevere messaggi. <span class="ar" style="display:block;text-align:left">الحساب كيبقى غير ف هاد التيليفون. الجيميل ولا الرقم غير معلومة، ما كيوصلك حتى ميساج.</span></p>`;
   app.querySelectorAll(".row[data-id]").forEach(b => b.onclick = () => enter(acct.profiles.find(p => p.id === b.dataset.id)));
   bindProfileForm(null);
+}
+
+const learnedCount = () => Q.filter(q => store.right[q.id] && !store.wrong.includes(q.id)).length;
+function readiness(ex, passed) {
+  const n = learnedCount(), pct = Math.round(n / Q.length * 100), C = 2 * Math.PI * 42;
+  const msg = pct >= 90 ? ["Sei quasi pronto!", "تقريباً واجد للامتحان!"] : pct >= 50 ? ["Buon lavoro, continua così", "خدمة مزيانة، كمّل"] : ["Inizia dai corsi e dai quiz", "بدا بالدروس والاختبارات"];
+  return `<div class="ring-card">
+    <div class="ring" role="img" aria-label="Domande imparate ${pct}%"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--chip)" stroke-width="10"/>
+      <circle cx="50" cy="50" r="42" fill="none" stroke="var(--blue)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(C * pct / 100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/></svg><b>${pct}%</b></div>
+    <div class="txt"><h3>Domande imparate</h3><span class="sub" style="font-size:14px">${msg[0]} <span class="ar">${msg[1]}</span></span>
+      <div class="kv"><span><b>${n}</b>/${Q.length} domande</span><span><b>${ex.length}</b> esami</span><span><b>${passed}</b> promossi</span></div></div></div>`;
+}
+/* Errors per exam, last 10. Status color + label: green = promosso (≤3), red = respinto. */
+function examChart(ex) {
+  if (!ex.length) return `<div class="chart-card"><h3>Andamento esami</h3><p class="sub">Fai la prima simulazione per vedere qui i tuoi errori esame dopo esame. <span class="ar" style="display:block;text-align:left">دير أول امتحان تجريبي باش تشوف هنا التقدم ديالك.</span></p></div>`;
+  const data = ex.slice(-10), off = ex.length - data.length;
+  const W = 320, H = 150, L = 26, R = 8, T = 12, B = 24, max = Math.max(6, ...data.map(d => d.errors));
+  const ih = H - T - B, step = (W - L - R) / 10, bw = Math.min(20, step - 8);
+  const y = v => T + ih - v / max * ih;
+  const ticks = [0, 3, max].filter((v, i, a) => a.indexOf(v) === i);
+  const bars = data.map((d, i) => {
+    const x = L + step * i + (step - bw) / 2, h = Math.max(2, ih - (y(d.errors) - T)), top = T + ih - h, r = Math.min(4, bw / 2, h);
+    const col = d.passed ? "var(--ok)" : "var(--red)", n = off + i + 1;
+    const date = new Date(d.d).toLocaleDateString("it-IT", { day: "numeric", month: "short" });
+    return `<path class="bar" tabindex="0" data-tip="Esame ${n} · ${date} · ${d.errors} ${d.errors === 1 ? "errore" : "errori"} · ${d.passed ? "promosso" : "respinto"}" fill="${col}"
+      d="M${x} ${T + ih} V${top + r} Q${x} ${top} ${x + r} ${top} H${x + bw - r} Q${x + bw} ${top} ${x + bw} ${top + r} V${T + ih} Z"><title>Esame ${n}: ${d.errors} errori</title></path>
+      <text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${n}</text>`;
+  }).join("");
+  const lastD = data[data.length - 1], lx = L + step * (data.length - 1) + step / 2;
+  return `<div class="chart-card"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><h3>Errori per esame</h3><span class="sub" style="font-size:13px">ultimi ${data.length}</span></div>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Errori negli ultimi ${data.length} esami">
+      ${ticks.map(t => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1" ${t === 3 ? 'stroke-dasharray="4 3"' : ""}/><text x="${L - 6}" y="${y(t) + 3.5}" text-anchor="end" font-size="10" fill="var(--muted)">${t}</text>`).join("")}
+      ${bars}
+      <text x="${Math.min(lx, W - R - 4)}" y="${y(lastD.errors) - 5}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">${lastD.errors}</text>
+    </svg>
+    <div class="legend"><span><i style="background:var(--ok)"></i>✓ Promosso (max 3)</span><span><i style="background:var(--red)"></i>✕ Respinto</span><span>- - - limite 3 errori</span></div>
+    <div class="tip" id="chartTip">Tocca una barra per i dettagli.</div></div>`;
+}
+function bindChart() {
+  app.querySelectorAll(".bar").forEach(b => { const f = () => { const t = $("#chartTip"); if (t) t.textContent = b.dataset.tip; }; b.onclick = f; b.onfocus = f; });
+}
+const footer = () => `<nav class="foot" aria-label="Informazioni"><a href="#impostazioni">Impostazioni</a><a href="#privacy">Privacy</a><a href="#termini">Termini</a><a href="#info">Info</a></nav>`;
+
+function viewSettings() {
+  const sw = (id, on, t, ta) => `<div class="setting"><span class="txt"><b>${t}</b><span class="ar">${ta}</span></span><button class="switch" role="switch" id="${id}" aria-checked="${on}" aria-label="${t}"></button></div>`;
+  const seg = (id, opts, cur) => `<div class="seg" id="${id}">${opts.map(([v, l]) => `<button data-v="${v}" aria-pressed="${String(v) === String(cur)}">${l}</button>`).join("")}</div>`;
+  app.innerHTML = `<div><h2>Impostazioni</h2><p class="sub ar">الإعدادات</p></div>
+    <div class="list">
+      ${sw("sAr", showAr, "Traduzione in arabo", "إظهار الترجمة العربية")}
+      <div class="setting"><span class="txt"><b>Velocità della voce</b><span class="ar">سرعة الصوت</span></span>${seg("sRate", [[0.8, "Lenta"], [1, "Normale"], [1.15, "Veloce"]], prefs.rate)}</div>
+      <div class="setting"><span class="txt"><b>Tema</b><span class="ar">المظهر</span></span>${seg("sTheme", [["auto", "Auto"], ["light", "Chiaro"], ["dark", "Scuro"]], prefs.theme)}</div>
+      <div class="setting"><span class="txt"><b>Prova l'audio</b><span class="ar">جرّب الصوت</span></span><button class="spk" id="sTest" aria-label="Prova l'audio">${SPK}</button></div>
+    </div>
+    <div class="list">
+      <a class="row" href="#privacy" style="text-decoration:none;color:inherit"><span class="txt"><b>Informativa sulla privacy</b><span class="ar">سياسة الخصوصية</span></span><span class="sub">›</span></a>
+      <a class="row" href="#termini" style="text-decoration:none;color:inherit"><span class="txt"><b>Termini d'uso</b><span class="ar">شروط الاستعمال</span></span><span class="sub">›</span></a>
+      <a class="row" href="#info" style="text-decoration:none;color:inherit"><span class="txt"><b>Info sull'app</b><span class="ar">حول التطبيق</span></span><span class="sub">›</span></a>
+    </div>
+    <div id="wipeZone"><button class="btn btn-ghost" id="sWipe" style="width:100%;color:var(--red)">Cancella tutti i dati <span class="ar">مسح كل المعلومات</span></button></div>`;
+  $("#sAr").onclick = e => { showAr = !showAr; ls.set(KEY + "-ar", showAr ? "1" : "0"); e.currentTarget.setAttribute("aria-checked", showAr); };
+  $("#sRate").onclick = e => { const b = e.target.closest("button"); if (!b) return; prefs.rate = +b.dataset.v; savePrefs(); viewSettings(); };
+  $("#sTheme").onclick = e => { const b = e.target.closest("button"); if (!b) return; prefs.theme = b.dataset.v; savePrefs(); applyTheme(); viewSettings(); };
+  $("#sTest").onclick = e => speak([{ text: "Benvenuto in Patente Facile. Buono studio!", lang: "it" }, { text: "مرحباً بك. بالتوفيق في الدراسة!", lang: "ar" }], e.currentTarget);
+  $("#sWipe").onclick = () => {
+    $("#wipeZone").innerHTML = `<div class="confirm"><b>Cancellare profili, progressi e impostazioni da questo telefono?</b><span class="ar">غادي يتمسحو كل الحسابات والتقدم والإعدادات من هاد التيليفون.</span>
+      <div class="nav2"><button class="btn btn-primary" id="wYes">Cancella tutto</button><button class="btn btn-ghost" id="wNo">Annulla</button></div></div>`;
+    $("#wNo").onclick = viewSettings;
+    $("#wYes").onclick = () => {
+      try { Object.keys(localStorage).filter(k => k.startsWith(KEY)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+      acct = { profiles: [], current: null }; me = null; locked = null; prefs = { rate: 1, theme: "auto" }; showAr = true; applyTheme(); loadStore(); renderAvatar(); updateBadge();
+      toast("Dati cancellati · تم المسح"); location.hash = "#home"; route();
+    };
+  };
+}
+let docLang = "it";
+function viewDoc(key) {
+  const d = DOCS[key], ar = docLang === "ar";
+  app.innerHTML = `<a href="#impostazioni" class="sub" style="text-decoration:none;font-weight:600">‹ Impostazioni</a>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap"><div><h2>${d.t}</h2><p class="sub ar" style="text-align:left">${d.ta}</p></div>
+    ${`<div class="seg" id="dLang"><button data-v="it" aria-pressed="${!ar}">Italiano</button><button data-v="ar" aria-pressed="${ar}">العربية</button></div>`}</div>
+    <article class="doc${ar ? " ar" : ""}">${d[docLang].map(([h, b]) => `<section><h3>${esc(h)}</h3><p>${esc(b())}</p></section>`).join("")}</article>
+    <p class="note">Ultimo aggiornamento: ${APP.updated} · ${APP.name} ${APP.version}</p>`;
+  $("#dLang").onclick = e => { const b = e.target.closest("button"); if (b) { docLang = b.dataset.v; viewDoc(key); } };
+}
+function viewInfo() {
+  app.innerHTML = `<a href="#impostazioni" class="sub" style="text-decoration:none;font-weight:600">‹ Impostazioni</a>
+    <div class="pcard"><div class="who"><span class="logo">${LOGO}</span><div><b>${APP.name}</b><span>Versione ${APP.version}</span></div></div>
+      <p style="margin:0">Studia la teoria della patente B in italiano, con traduzione e spiegazioni in arabo. <span class="ar" style="display:block;text-align:left;color:var(--muted)">تعلّم النظري ديال رخصة B بالإيطالية، مع الترجمة والشرح بالعربية.</span></p>
+      <div class="kv"><span><b>${Q.length}</b> domande</span><span><b>${Object.values(LESSONS).reduce((a, l) => a + l.length, 0)}</b> regole nei corsi</span><span><b>${Object.keys(SIGNS).length}</b> segnali</span></div></div>
+    <div class="confirm" style="background:var(--chip)"><b>App non ufficiale</b><span>Non collegata al Ministero delle Infrastrutture e dei Trasporti né alla Motorizzazione Civile. Le domande non sono quelle ufficiali dell'esame.</span>
+      <span class="ar">تطبيق غير رسمي، لا علاقة له بالوزارة ولا بـ Motorizzazione. الأسئلة ليست هي الأسئلة الرسمية للامتحان.</span></div>
+    <div class="list">
+      <div class="setting"><span class="txt"><b>Sviluppatore</b><span class="sub" style="font-size:14px">${esc(APP.developer)}</span></span></div>
+      <div class="setting"><span class="txt"><b>Contatti e segnalazioni</b><span class="sub" style="font-size:14px;user-select:all">${esc(APP.email)}</span></span><button class="toggle" id="cpy">Copia</button></div>
+    </div>`;
+  $("#cpy").onclick = () => { const ok = () => toast("Email copiata · تم النسخ"); try { navigator.clipboard.writeText(APP.email).then(ok, () => toast(APP.email)); } catch (e) { toast(APP.email); } };
 }
 
 function viewCourses() {
@@ -847,17 +1057,23 @@ function finishPractice() {
 }
 
 /* ---------- Routing ---------- */
-const VIEWS = { home: viewHome, profilo: viewProfile, corsi: viewCourses, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
+const VIEWS = { home: viewHome, profilo: viewProfile, impostazioni: viewSettings, info: viewInfo, privacy: () => viewDoc("privacy"), termini: () => viewDoc("termini"), corsi: viewCourses, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
 function route() {
   if (session) return;
   document.body.classList.remove("in-quiz");
   stopSpeak();
   const h = location.hash.slice(1), lk = h.startsWith("corso-") && TOPICS[h.slice(6)] ? h.slice(6) : null;
   const v = lk ? "corsi" : VIEWS[h] ? h : "home";
-  document.querySelectorAll(".tabs a").forEach(a => a.dataset.v === v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  const tab = { impostazioni: "home", info: "home", privacy: "home", termini: "home", profilo: "home" }[v] || v;
+  document.querySelectorAll(".tabs a").forEach(a => a.dataset.v === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
   renderAvatar();
-  locked ? showLogin(locked) : lk ? viewLesson(lk) : VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
+  locked && !["privacy", "termini"].includes(v) ? showLogin(locked) : lk ? viewLesson(lk) : VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
 }
+/* A link to the page already in the address bar fires no hashchange: render it directly. */
+document.addEventListener("click", e => {
+  const l = e.target.closest('a[href^="#"]');
+  if (l && l.getAttribute("href") === location.hash && !(session && session.mode === "exam")) { e.preventDefault(); stopSpeak(); session = null; clearInterval(timerId); route(); }
+});
 window.addEventListener("hashchange", () => { if (session && session.mode === "exam") return; session = null; clearInterval(timerId); route(); });
 route();
 </script>
