@@ -134,8 +134,21 @@ h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0
 /* Tab bar */
 nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-top: 1px solid var(--line);
   padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)) }
-.tabs-in { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr) }
-.tabs a { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 9px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; position: relative }
+.tabs-in { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr) }
+.spk { flex: none; width: 40px; height: 40px; border-radius: 99px; display: grid; place-items: center; background: var(--chip); color: var(--blue) }
+.spk svg { width: 20px; height: 20px }
+.spk.on { background: var(--blue); color: var(--blue-ink) }
+.lesson { display: grid; gap: 10px }
+.pt { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; gap: 12px; align-items: flex-start }
+.pt .body { flex: 1; min-width: 0; display: grid; gap: 6px }
+.pt .num { font-family: var(--f-display); font-weight: 700; font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums }
+.pt p { margin: 0 } .pt .it { font-size: 17px; font-weight: 500 }
+.pt .ar { font-size: 15px; color: var(--muted) }
+.pt.playing { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue) }
+.lhead { display: flex; align-items: center; gap: 12px }
+.lhead svg { width: 56px; height: 56px; flex: none }
+.note { font-size: 13px; color: var(--muted); margin: 0 }
+.tabs a { display: grid; justify-items: center; gap: 2px; padding: 8px 2px 9px; color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 600; position: relative }
 .tabs a svg { width: 24px; height: 24px }
 .tabs a[aria-current="page"] { color: var(--blue) }
 .tabs a .badge { position: absolute; top: 4px; left: calc(50% + 6px); background: var(--red); color: #fff; font-size: 10px; border-radius: 99px; padding: 0 5px; line-height: 16px; font-variant-numeric: tabular-nums }
@@ -158,7 +171,8 @@ body.in-quiz main { padding-bottom: 32px }
 
 <nav class="tabs" aria-label="Sezioni"><div class="tabs-in">
   <a href="#home" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-  <a href="#argomenti" data-v="argomenti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Argomenti</a>
+  <a href="#corsi" data-v="corsi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/></svg>Corsi</a>
+  <a href="#argomenti" data-v="argomenti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Quiz</a>
   <a href="#segnali" data-v="segnali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l10 17H2z"/><path d="M12 10v4M12 17v.5" stroke-linecap="round"/></svg>Segnali</a>
   <a href="#errori" data-v="errori"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Errori<span class="badge" id="errBadge" hidden></span></a>
 </div></nav>
@@ -348,6 +362,126 @@ const RAW = [
 ];
 const Q = RAW.map((r, i) => ({ id: i, t: r[0], s: r[1], q: r[2], a: !!r[3], ar: r[4], e: r[5] }));
 
+
+/* ---------- Lessons: per topic, [Italian rule, Arabic explanation] ---------- */
+const LESSONS = {
+  seg: [
+    ["I segnali di pericolo sono triangolari, con bordo rosso. Fuori dai centri abitati si trovano di norma 150 metri prima del pericolo.", "علامات الخطر مثلثة بحافة حمراء. خارج المدن توضع عادة 150 متراً قبل الخطر."],
+    ["I segnali di divieto sono rotondi, con bordo rosso. Indicano cosa non si può fare: per esempio superare i 50 km/h o sorpassare.", "علامات المنع دائرية بحافة حمراء، وتقول لك ما هو ممنوع: مثلاً تجاوز 50 كلم/س أو التجاوز."],
+    ["I segnali di obbligo sono rotondi, con fondo blu. Indicano cosa si deve fare, per esempio girare nella rotatoria nel senso delle frecce.", "علامات الإلزام دائرية بخلفية زرقاء، وتقول لك ما يجب فعله، مثلاً الدوران في المدار حسب الأسهم."],
+    ["I segnali di indicazione sono di solito rettangolari: blu sulle strade extraurbane, verdi in autostrada.", "علامات الإرشاد عادة مستطيلة: زرقاء في الطرق خارج المدن، وخضراء في الطريق السيار."],
+    ["Lo STOP è ottagonale: ci si ferma sempre. Il DARE PRECEDENZA è un triangolo rovesciato: ci si ferma solo se arriva qualcuno.", "STOP مثمّنة: تتوقف دائماً. 'أعطِ الأولوية' مثلث مقلوب: تتوقف فقط إذا كان أحد قادماً."]
+  ],
+  pre: [
+    ["Negli incroci senza segnali si dà la precedenza a chi arriva da destra.", "في التقاطعات بدون علامات، الأولوية لمن يأتي من اليمين."],
+    ["Le indicazioni dell'agente del traffico valgono più del semaforo, e il semaforo vale più dei segnali.", "إشارة شرطي المرور أقوى من الضوء، والضوء أقوى من العلامات."],
+    ["Semaforo verde: si passa se l'incrocio è libero. Giallo: ci si ferma, se si può farlo in sicurezza. Rosso: ci si ferma prima della linea di arresto.", "الأخضر: تمر إذا كان التقاطع فارغاً. الأصفر: توقف إذا استطعت بأمان. الأحمر: توقف قبل خط التوقف."],
+    ["I pedoni che attraversano sulle strisce hanno la precedenza.", "الراجلون الذين يعبرون في الممر لهم الأولوية."],
+    ["Ai veicoli di soccorso con sirena e lampeggiante blu bisogna lasciare libero il passaggio.", "يجب ترك الطريق لسيارات الإسعاف والشرطة عندما تشغّل الصفارة والضوء الأزرق."],
+    ["Chi esce da un passo carrabile o da un'area privata dà la precedenza a chi circola sulla strada.", "من يخرج من كراج أو مكان خاص يعطي الأولوية لمن هو في الطريق."]
+  ],
+  vel: [
+    ["Limiti per le autovetture: 50 km/h nei centri abitati, 90 sulle extraurbane secondarie, 110 sulle extraurbane principali, 130 in autostrada.", "حدود السرعة للسيارات: 50 داخل المدن، 90 في الطرق الثانوية، 110 في الطرق الرئيسية خارج المدن، 130 في الطريق السيار."],
+    ["Con la pioggia i limiti scendono: 110 in autostrada e 90 sulle extraurbane principali.", "مع المطر تنخفض الحدود: 110 في الطريق السيار و90 في الطرق الرئيسية."],
+    ["Nei primi tre anni di patente: massimo 100 km/h in autostrada e 90 km/h sulle extraurbane principali.", "في السنوات الثلاث الأولى من الرخصة: 100 كلم/س على الأكثر في الطريق السيار و90 في الطرق الرئيسية."],
+    ["Lo spazio di arresto è lo spazio percorso nel tempo di reazione più lo spazio di frenatura. Se la velocità raddoppia, lo spazio di frenatura diventa circa quattro volte più lungo.", "مسافة التوقف = المسافة أثناء ردة الفعل + مسافة الفرملة. إذا تضاعفت السرعة، تصبح مسافة الفرملة تقريباً أربع مرات أطول."],
+    ["La distanza di sicurezza va aumentata con pioggia, nebbia, strada scivolosa o quando si è stanchi.", "زِد مسافة الأمان مع المطر، الضباب، الطريق الزلقة، أو عندما تكون متعباً."]
+  ],
+  sor: [
+    ["Il sorpasso si fa a sinistra. A destra solo se il veicolo davanti ha segnalato di svoltare a sinistra e si è spostato verso il centro.", "التجاوز يكون من اليسار. من اليمين فقط إذا أشارت السيارة أمامك أنها ستنعطف يساراً وتحركت نحو الوسط."],
+    ["Prima di sorpassare: guarda negli specchietti, controlla che nessuno ti stia già sorpassando e metti la freccia.", "قبل التجاوز: انظر في المرايا، تأكد أن لا أحد يتجاوزك، وشغّل الإشارة."],
+    ["È vietato sorpassare vicino a curve e dossi senza visibilità, negli incroci e vicino ai passaggi a livello senza barriere.", "يُمنع التجاوز قرب المنعطفات والمرتفعات بدون رؤية، في التقاطعات، وقرب ممر القطار بدون حواجز."],
+    ["Non si sorpassa un veicolo fermo per far attraversare i pedoni.", "لا تتجاوز سيارة متوقفة لترك الراجلين يعبرون."],
+    ["La striscia continua non si può mai oltrepassare. Durante il sorpasso il limite di velocità resta valido.", "الخط المتصل لا يُقطع أبداً. وأثناء التجاوز يبقى حد السرعة كما هو."]
+  ],
+  sos: [
+    ["Fermata: breve sosta per far salire o scendere persone, il conducente resta vicino. Sosta: il veicolo resta fermo a lungo e il conducente può allontanarsi.", "Fermata: توقف قصير لصعود أو نزول الأشخاص، والسائق يبقى قريباً. Sosta: السيارة تبقى مدة طويلة ويمكن للسائق أن يبتعد."],
+    ["Strisce blu: parcheggio a pagamento. Strisce bianche: di solito libero. Strisce gialle: posti riservati, per esempio disabili o carico e scarico.", "الخطوط الزرقاء: بالأداء. البيضاء: عادة مجانية. الصفراء: أماكن مخصصة، مثل ذوي الإعاقة أو الشحن والتفريغ."],
+    ["È vietato sostare sulle strisce pedonali, alle fermate degli autobus, davanti ai passi carrabili e in doppia fila.", "يُمنع الركن فوق ممر الراجلين، في محطات الحافلات، أمام الكراجات، وفي صف ثانٍ."],
+    ["Il divieto di sosta (una barra) permette la fermata. Il divieto di fermata (la X) vieta sia la fermata sia la sosta.", "منع الوقوف (خط واحد) يسمح بالتوقف القصير. منع التوقف (علامة X) يمنع الاثنين."]
+  ],
+  luc: [
+    ["Fuori dai centri abitati e in galleria le luci anabbaglianti devono essere accese anche di giorno.", "خارج المدن وفي الأنفاق يجب تشغيل الأضواء المنخفضة حتى في النهار."],
+    ["Gli abbaglianti si usano fuori dai centri abitati, e si spengono quando si incrocia o si segue un altro veicolo.", "الأضواء العالية تُستعمل خارج المدن، وتُطفأ عندما تقابل أو تتبع سيارة أخرى."],
+    ["Il fendinebbia posteriore si usa solo con nebbia fitta o visibilità molto ridotta, perché abbaglia chi sta dietro.", "ضوء الضباب الخلفي فقط مع الضباب الكثيف أو الرؤية الضعيفة جداً، لأنه يُبهر من خلفك."],
+    ["Le quattro frecce si accendono quando il veicolo è fermo per un guasto e può essere un pericolo.", "الأضواء الأربعة تُشغّل عندما تكون السيارة متوقفة بسبب عطل وقد تشكل خطراً."]
+  ],
+  aut: [
+    ["In autostrada non possono circolare pedoni, biciclette e ciclomotori.", "في الطريق السيار ممنوع الراجلون والدراجات الهوائية والدراجات الصغيرة."],
+    ["In autostrada sono vietate la retromarcia e l'inversione. Se si sbaglia uscita, si va alla successiva.", "في الطريق السيار ممنوع الرجوع للخلف والدوران. إذا فاتك المخرج، اذهب إلى المخرج التالي."],
+    ["La corsia di destra è quella normale di marcia, quelle di sinistra servono per sorpassare.", "الممر الأيمن هو ممر السير العادي، والممرات اليسرى للتجاوز."],
+    ["La corsia di emergenza si usa solo in caso di guasto o emergenza, non per superare le code o per riposarsi.", "ممر الطوارئ فقط للأعطال والطوارئ، وليس لتجاوز الازدحام أو للراحة."],
+    ["In caso di guasto: quattro frecce, giubbotto retroriflettente prima di scendere, triangolo, poi chiamare il soccorso.", "عند العطل: الأضواء الأربعة، السترة العاكسة قبل النزول، المثلث، ثم اتصل بالمساعدة."]
+  ],
+  pat: [
+    ["Con la patente B si guida l'auto dai 18 anni. L'esame di teoria ha 30 domande vero o falso, 20 minuti, e si passa con massimo 3 errori.", "برخصة B تقود السيارة من 18 سنة. امتحان النظري: 30 سؤالاً صحيح أو خطأ، 20 دقيقة، وتنجح بـ3 أخطاء على الأكثر."],
+    ["La patente parte con 20 punti. Ogni due anni senza violazioni si guadagnano 2 punti, fino a 30. Se si perdono tutti, si rifà l'esame.", "الرخصة تبدأ بـ20 نقطة. كل سنتين بدون مخالفات تربح نقطتين، حتى 30. إذا فقدت كل النقاط تعيد الامتحان."],
+    ["Nei primi tre anni, i punti tolti per una violazione sono il doppio.", "في السنوات الثلاث الأولى، النقاط المسحوبة تكون مضاعفة."],
+    ["Il limite di alcol è 0,5 grammi per litro. Per i neopatentati e per chi ha meno di 21 anni il limite è zero.", "حد الكحول 0.5 غرام في اللتر. للسائق الجديد ولمن هو أقل من 21 سنة: صفر."],
+    ["Caffè, acqua o aria fresca non fanno scendere l'alcol: serve solo il tempo.", "القهوة أو الماء أو الهواء لا تُنقص الكحول: فقط الوقت."]
+  ],
+  sic: [
+    ["Le cinture vanno allacciate sempre, davanti e dietro, anche per tragitti brevi. L'airbag non sostituisce la cintura.", "حزام الأمان إجباري دائماً، في الأمام والخلف، حتى في المسافات القصيرة. الوسادة الهوائية لا تعوّض الحزام."],
+    ["I bambini sotto 1,50 metri viaggiano su un seggiolino omologato. Mai il seggiolino rivolto all'indietro davanti a un airbag attivo.", "الأطفال أقل من 1.50 م يجلسون في كرسي أطفال معتمد. لا تضع الكرسي المقلوب للخلف أمام وسادة هوائية مشغّلة."],
+    ["Il telefono si usa solo con il vivavoce o l'auricolare, mai tenendolo in mano.", "الهاتف فقط بمكبر الصوت أو السماعة، أبداً في اليد."],
+    ["Il casco è obbligatorio su moto e ciclomotori.", "الخوذة إجبارية في الدراجات النارية."],
+    ["Stanchezza, alcol e alcuni farmaci rallentano i riflessi: se sei stanco, fermati e riposa.", "التعب والكحول وبعض الأدوية تُبطئ ردة الفعل: إذا كنت متعباً، توقف واسترح."]
+  ],
+  inc: [
+    ["In caso di incidente con feriti bisogna fermarsi e prestare aiuto.", "في حادث فيه جرحى يجب التوقف والمساعدة."],
+    ["Accendi le quattro frecce, indossa il giubbotto e metti il triangolo ad almeno 50 metri, visibile da almeno 100 metri.", "شغّل الأضواء الأربعة، البس السترة، وضع المثلث على بعد 50 متراً على الأقل، مرئياً من 100 متر."],
+    ["Chiama il 112, il numero unico di emergenza, anche dal cellulare.", "اتصل بـ112، الرقم الموحد للطوارئ، حتى من الهاتف المحمول."],
+    ["Non spostare il ferito se non c'è pericolo, non togliere il casco al motociclista e non dare da bere.", "لا تحرّك المصاب إلا عند الخطر، لا تنزع خوذة سائق الدراجة، ولا تعطه شيئاً يشربه."]
+  ],
+  vei: [
+    ["Quando guidi porta la patente e la carta di circolazione. L'assicurazione RCA è obbligatoria.", "عندما تقود احمل الرخصة والبطاقة الرمادية. التأمين RCA إجباري."],
+    ["Il battistrada deve essere profondo almeno 1,6 mm. Pneumatici sgonfi consumano di più e tengono meno la strada.", "عمق نقوش العجلات 1.6 مم على الأقل. العجلات الناقصة الهواء تستهلك أكثر وتثبت أقل."],
+    ["La prima revisione dell'auto si fa dopo 4 anni, poi ogni 2 anni.", "أول فحص تقني بعد 4 سنوات، ثم كل سنتين."],
+    ["L'ABS evita il bloccaggio delle ruote in frenata, così puoi ancora sterzare.", "نظام ABS يمنع انغلاق العجلات عند الفرملة، فتستطيع التحكم في المقود."],
+    ["Aquaplaning: succede con acqua sulla strada, gomme consumate e velocità alta. Togli il piede dall'acceleratore e non frenare di colpo.", "الانزلاق فوق الماء يحدث مع الماء في الطريق، عجلات مستهلكة وسرعة عالية. ارفع رجلك عن البنزين ولا تفرمل فجأة."]
+  ]
+};
+
+/* ---------- Audio (text-to-speech on the device) ---------- */
+const TTS = window.speechSynthesis;
+let voices = [];
+const loadVoices = () => { try { voices = TTS ? TTS.getVoices() : []; } catch (e) { voices = []; } };
+loadVoices(); if (TTS) TTS.onvoiceschanged = loadVoices;
+const voiceFor = lang => voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang));
+let speakId = 0;
+function stopSpeak() { speakId++; try { TTS && TTS.cancel(); } catch (e) {} document.querySelectorAll(".spk.on").forEach(b => b.classList.remove("on")); document.querySelectorAll(".pt.playing").forEach(b => b.classList.remove("playing")); }
+/* parts: [{text, lang:"it"|"ar", el?}] ; btn shows playing state */
+function speak(parts, btn) {
+  if (btn && btn.classList.contains("on")) { stopSpeak(); return; }
+  stopSpeak();
+  if (!TTS) { toast("Audio non disponibile su questo browser · الصوت غير متوفر"); return; }
+  loadVoices();
+  const id = speakId;
+  const list = parts.filter(p => p.lang === "it" || (showAr && (voiceFor("ar") || !voices.length)));
+  if (btn) btn.classList.add("on");
+  let i = 0;
+  const next = () => {
+    document.querySelectorAll(".pt.playing").forEach(b => b.classList.remove("playing"));
+    if (id !== speakId) return;
+    if (i >= list.length) { if (btn) btn.classList.remove("on"); return; }
+    const p = list[i++];
+    if (p.el) p.el.classList.add("playing");
+    const u = new SpeechSynthesisUtterance(p.text);
+    u.lang = p.lang === "it" ? "it-IT" : "ar-SA";
+    const v = voiceFor(p.lang); if (v) u.voice = v;
+    u.rate = p.lang === "it" ? 0.92 : 0.95;
+    u.onend = next; u.onerror = next;
+    TTS.speak(u);
+  };
+  next();
+}
+function toast(msg) {
+  let t = document.getElementById("toast");
+  if (!t) { t = document.createElement("div"); t.id = "toast"; t.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;font-size:14px;z-index:20;max-width:90%"; document.body.appendChild(t); }
+  t.textContent = msg; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 3000);
+}
+const SPK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`;
+
 /* ---------- Storage (per-device progress) ---------- */
 const KEY = "patente-facile-v1";
 let store = { exams: [], wrong: [], right: {} };
@@ -396,12 +530,39 @@ function viewHome() {
       <div class="stat"><b>${seen}/${Q.length}</b><span>domande giuste</span></div>
     </div>
     ${last.length ? `<div style="display:grid;gap:8px"><div class="eyebrow">Ultimi esami · errori</div><div class="history">${last.map(x => `<span class="pill ${x.passed ? "ok" : "bad"}">${x.errors} err</span>`).join("")}</div></div>` : ""}
+    <a class="btn btn-blue" href="#corsi" style="text-decoration:none">Studia i corsi <span class="ar">الدروس مع الصوت</span></a>
     <div class="nav2">
-      <a class="btn btn-blue" href="#argomenti" style="text-decoration:none">Allenati <span class="ar">تمرّن</span></a>
+      <a class="btn btn-ghost" href="#argomenti" style="text-decoration:none">Allenati <span class="ar">تمرّن</span></a>
       <a class="btn btn-ghost" href="#errori" style="text-decoration:none">Errori <span class="ar">أخطائي</span></a>
     </div>
     <p class="sub" style="font-size:13px">I tuoi progressi restano salvati su questo telefono. <span class="ar" style="display:block;text-align:left">تقدّمك محفوظ في هذا الهاتف.</span></p>`;
   $("#goExam").onclick = startExam;
+}
+
+function viewCourses() {
+  const rows = Object.entries(TOPICS).map(([k, t]) => `<a class="row" href="#corso-${k}" style="text-decoration:none;color:inherit"><span class="ic">${signSvg(t.ic, "")}</span>
+      <span class="txt"><b>${t.n}</b><span class="ar">${t.ar}</span></span><span class="sub" style="font-size:13px">${LESSONS[k].length} regole ›</span></a>`).join("");
+  app.innerHTML = `<div><h2>Corsi</h2><p class="sub ar">دروس قصيرة لكل موضوع، بالإيطالية مع الشرح بالعربية. اضغط 🔊 باش تسمع.</p></div>
+    <div class="list">${rows}</div>`;
+}
+function viewLesson(k) {
+  const t = TOPICS[k], L = LESSONS[k];
+  const keys = Object.keys(TOPICS), nk = keys[(keys.indexOf(k) + 1) % keys.length];
+  app.innerHTML = `
+    <a href="#corsi" class="sub" style="text-decoration:none;font-weight:600">‹ Corsi</a>
+    <div class="lhead">${signSvg(t.ic, "")}<div><h2>${t.n}</h2><p class="sub ar" style="text-align:left">${t.ar}</p></div></div>
+    <div class="nav2"><button class="btn btn-blue" id="playAll">${SPK.replace("<svg", '<svg width="22" height="22"')} Ascolta tutta la lezione</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><p class="note">L'audio usa le voci del tuo telefono.</p><button class="toggle" id="tgl" aria-pressed="${showAr}">عربي</button></div>
+    <div class="lesson">${L.map(([it, ar], i) => `<div class="pt" id="pt${i}"><div class="body"><span class="num">${String(i + 1).padStart(2, "0")}</span>
+      <p class="it">${esc(it)}</p>${showAr ? `<p class="ar">${esc(ar)}</p>` : ""}</div>
+      <button class="spk" data-i="${i}" aria-label="Ascolta">${SPK}</button></div>`).join("")}</div>
+    <button class="btn btn-primary" id="doQuiz">Fai il quiz: ${t.n} <span class="ar">اختبر نفسك</span></button>
+    <a class="btn btn-ghost" href="#corso-${nk}" style="text-decoration:none">Prossima: ${TOPICS[nk].n} ›</a>`;
+  const parts = (i, el) => [{ text: L[i][0], lang: "it", el }, { text: L[i][1], lang: "ar", el }];
+  app.querySelectorAll(".spk").forEach(b => b.onclick = () => { const i = +b.dataset.i; speak(parts(i, $("#pt" + i)), b); });
+  $("#playAll").onclick = e => speak(L.flatMap((_, i) => parts(i, $("#pt" + i))), e.currentTarget);
+  $("#tgl").onclick = () => { showAr = !showAr; try { localStorage.setItem(KEY + "-ar", showAr ? "1" : "0"); } catch (e) {} stopSpeak(); viewLesson(k); };
+  $("#doQuiz").onclick = () => { stopSpeak(); startPractice(shuffle(Q.filter(q => q.t === k)), t.n); };
 }
 
 function viewTopics() {
@@ -412,7 +573,7 @@ function viewTopics() {
       <span class="txt"><b>${t.n}</b><span class="ar">${t.ar}</span></span>
       <span class="meter"><small>${ok}/${qs.length}</small><i style="--p:${p}%"></i></span></button>`;
   }).join("");
-  app.innerHTML = `<div><h2>Argomenti</h2><p class="sub ar">اختر موضوعاً وتمرّن. بعد كل جواب تشوف الشرح.</p></div>
+  app.innerHTML = `<div><h2>Quiz per argomento</h2><p class="sub ar">اختر موضوعاً وتمرّن. بعد كل جواب تشوف الشرح.</p></div>
     <button class="btn btn-blue" id="all">Tutte le domande (${Q.length}) <span class="ar">كل الأسئلة</span></button>
     <div class="list">${rows}</div>`;
   $("#all").onclick = () => startPractice(shuffle(Q), "Tutte le domande");
@@ -455,6 +616,7 @@ function startExam() {
 function startPractice(qs, title) { session = { mode: "practice", title, qs, ans: Array(qs.length).fill(null), i: 0, ok: 0 }; renderQuiz(); }
 
 function renderQuiz() {
+  stopSpeak();
   document.body.classList.add("in-quiz");
   const s = session, q = s.qs[s.i], a = s.ans[s.i], exam = s.mode === "exam";
   const answered = a !== null, fb = !exam && answered;
@@ -465,7 +627,7 @@ function renderQuiz() {
       ${exam ? `<span class="timer${s.left <= 120 ? " low" : ""}" id="timer">${fmt(s.left)}</span>` : `<span class="timer">✓ ${s.ok}</span>`}</div>
     ${exam ? `<div class="grid30">${s.qs.map((_, k) => `<button data-k="${k}" class="${s.ans[k] !== null ? "done" : ""}${k === s.i ? " cur" : ""}" aria-label="Domanda ${k + 1}">${k + 1}</button>`).join("")}</div>` : ""}
     <article class="qcard">
-      <div class="qtopic"><span class="cat">${TOPICS[q.t].n}</span><button class="toggle" id="tgl" aria-pressed="${showAr}">عربي</button></div>
+      <div class="qtopic"><span class="cat">${TOPICS[q.t].n}</span><span style="display:flex;gap:8px;align-items:center"><button class="toggle" id="tgl" aria-pressed="${showAr}">عربي</button><button class="spk" id="qspk" aria-label="Ascolta la domanda">${SPK}</button></span></div>
       ${q.s ? `<div class="sign-wrap">${signSvg(q.s, "Segnale")}</div>` : ""}
       <p class="qtext">${esc(q.q)}</p>
       ${showAr ? `<p class="qar ar">${esc(q.ar)}</p>` : ""}
@@ -487,9 +649,10 @@ function renderQuiz() {
     if (answered) return;
     s.ans[s.i] = v; const ok = v === q.a; if (ok) s.ok++; record(q, ok); updateBadge(); renderQuiz();
   };
+  $("#qspk").onclick = e => speak([{ text: q.q, lang: "it" }, { text: q.ar, lang: "ar" }].concat(fb ? [{ text: q.e, lang: "ar" }] : []), e.currentTarget);
   $("#bV").onclick = () => pick(true); $("#bF").onclick = () => pick(false);
   $("#tgl").onclick = () => { showAr = !showAr; try { localStorage.setItem(KEY + "-ar", showAr ? "1" : "0"); } catch (e) {} renderQuiz(); };
-  $("#quit").onclick = () => { clearInterval(timerId); session = null; document.body.classList.remove("in-quiz"); route(); };
+  $("#quit").onclick = () => { stopSpeak(); clearInterval(timerId); session = null; document.body.classList.remove("in-quiz"); route(); };
   const nx = $("#next");
   if (nx) nx.onclick = () => { if (s.i < s.qs.length - 1) { s.i++; renderQuiz(); } else exam ? finishExam() : finishPractice(); };
   const pv = $("#prev"); if (pv) pv.onclick = () => { s.i--; renderQuiz(); };
@@ -523,13 +686,15 @@ function finishPractice() {
 }
 
 /* ---------- Routing ---------- */
-const VIEWS = { home: viewHome, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
+const VIEWS = { home: viewHome, corsi: viewCourses, argomenti: viewTopics, segnali: viewSigns, errori: viewErrors };
 function route() {
   if (session) return;
   document.body.classList.remove("in-quiz");
-  const v = VIEWS[location.hash.slice(1)] ? location.hash.slice(1) : "home";
+  stopSpeak();
+  const h = location.hash.slice(1), lk = h.startsWith("corso-") && TOPICS[h.slice(6)] ? h.slice(6) : null;
+  const v = lk ? "corsi" : VIEWS[h] ? h : "home";
   document.querySelectorAll(".tabs a").forEach(a => a.dataset.v === v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
-  VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
+  lk ? viewLesson(lk) : VIEWS[v](); updateBadge(); window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", () => { if (session && session.mode === "exam") return; session = null; clearInterval(timerId); route(); });
 route();
